@@ -14,7 +14,7 @@ models:
     sales_and_procurement:
       star_schema:
         intermediate:
-          +materialized: ephemeral
+          +materialized: view
     compatibility_views:
       +schema: sap_comp_views
       +materialized: view
