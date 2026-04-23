@@ -46,7 +46,7 @@ vars:
     finsc_ld_cmp: "{{ source('sap', 'finsc_ld_cmp') }}"
     kna1: "{{ source('sap','kna1') }}"
     sap_lfa1_identifier: "kel1_sap_hana_db_sapabap1__lfa1"
-    lfa1: "{{ source('dbo', 'lfa1') }}"
+    lfa1: "{{ source('sap', 'lfa1') }}"
     makt: "{{ source('sap', 'makt') }}"
     mara: "{{ source('sap', 'mara') }}"
     marc: "{{ source('sap', 'marc') }}"
