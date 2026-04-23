@@ -4417,7 +4417,7 @@ sources:
             description: Temporary customer indicator
 
       - name: lfa1
-        identifier: "{{ var('sap_lfa1_identifier', 'lfa1') }}"
+        identifier: "{{var('prefix_table_name') ~ 'lfa1'}}"
         config:
           enabled: "{{ var('sap_using_lfa1', true) }}"
         description: Vendor master (General section)
