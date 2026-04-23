@@ -4708,7 +4708,7 @@ sources:
             description: Posting block
 
       - name: makt
-        identifier: "{{ var('sap_makt_identifier', 'makt') }}"
+        identifier: "{{var('prefix_table_name') ~ 'makt'}}"
         config:
           enabled: "{{ var('sap_using_makt', true) }}"
         description: Material Descriptions
@@ -4729,7 +4729,7 @@ sources:
             description: Language key
 
       - name: mara
-        identifier: "{{ var('sap_mara_identifier', 'mara') }}"
+        identifier: "{{var('prefix_table_name') ~ 'mara'}}"
         config:
           enabled: "{{ var('sap_using_mara', true) }}"
         description: General material data
@@ -6165,7 +6165,7 @@ sources:
             description: Vendor withholding tax active
 
       - name: t001w
-        identifier: "{{ var('sap_t001w_identifier', 't001w') }}"
+        identifier: "{{var('prefix_table_name') ~ 't001w'}}"
         config:
           enabled: "{{ var('sap_using_t001w', true) }}"
         description: Plants/Branches
@@ -6518,7 +6518,7 @@ sources:
             description: Fivetran SAP archive marker
 
       - name: t134
-        identifier: "{{ var('sap_t134_identifier', 't134') }}"
+        identifier: "{{var('prefix_table_name') ~ 't134'}}"
         config:
           enabled: "{{ var('sap_using_t134', true) }}"
         description: Material types
@@ -6607,7 +6607,7 @@ sources:
             description: Weight unit group
 
       - name: t134t
-        identifier: "{{ var('sap_t134t_identifier', 't134t') }}"
+        identifier: "{{var('prefix_table_name') ~ 't134t'}}"
         config:
           enabled: "{{ var('sap_using_t134t', true) }}"
         description: Material type descriptions
@@ -6878,7 +6878,7 @@ sources:
             description: Branch number
 
       - name: tvag
-        identifier: "{{ var('sap_tvag_identifier', 'tvag') }}"
+        identifier: "{{var('prefix_table_name') ~ 'tvag'}}"
         config:
           enabled: "{{ var('sap_using_tvag', true) }}"
         description: Sales document rejection reasons
@@ -6909,7 +6909,7 @@ sources:
             description: Client
 
       - name: tvagt
-        identifier: "{{ var('sap_tvagt_identifier', 'tvagt') }}"
+        identifier: "{{var('prefix_table_name') ~ 'tvagt'}}"
         config:
           enabled: "{{ var('sap_using_tvagt', true) }}"
         description: Rejection reason texts
@@ -6930,7 +6930,7 @@ sources:
             description: Language key
 
       - name: vbak
-        identifier: "{{ var('sap_vbak_identifier', 'vbak') }}"
+        identifier: "{{var('prefix_table_name') ~ 'vbak'}}"
         config:
           enabled: "{{ var('sap_using_vbak', true) }}"
         description: Sales document header data
@@ -7259,7 +7259,7 @@ sources:
             description: Assignment number
 
       - name: vbap
-        identifier: "{{ var('sap_vbap_identifier', 'vbap') }}"
+        identifier: "{{var('prefix_table_name') ~ 'vbap'}}"
         config:
           enabled: "{{ var('sap_using_vbap', true) }}"
         description: Sales document item data
@@ -7866,7 +7866,7 @@ sources:
             description: DEA schedule
 
       - name: vbuk
-        identifier: "{{ var('sap_vbuk_identifier', 'vbuk') }}"
+        identifier: "{{var('prefix_table_name') ~ 'vbuk'}}"
         config:
           enabled: "{{ var('sap_using_vbuk', true) }}"
         description: Sales document status (header)
@@ -8051,7 +8051,7 @@ sources:
             description: Goods issue status
 
       - name: vbup
-        identifier: "{{ var('sap_vbup_identifier', 'vbup') }}"
+        identifier: "{{var('prefix_table_name') ~ 'vbup'}}"
         config:
           enabled: "{{ var('sap_using_vbup', true) }}"
         description: Sales document status (item level)
