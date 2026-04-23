@@ -4092,7 +4092,7 @@ sources:
             description: Special region
 
       - name: kna1
-        identifier: "{{ var('sap_kna1_identifier', 'kna1') }}"
+        identifier: "{{var('prefix_table_name') ~ 'kna1'}}"
         config:
           enabled: "{{ var('sap_using_kna1', true) }}"
         description: General Data in Customer Master
