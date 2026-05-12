@@ -17,6 +17,7 @@ models:
       +schema: kel_dbt
       star_schema:
         +schema: kel_dbt
+        +materialized: table
         intermediate:
           +schema: kel_dbt
           +materialized: view
