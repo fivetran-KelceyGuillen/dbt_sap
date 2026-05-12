@@ -15,6 +15,7 @@ models:
     sales_and_procurement:
       +schema: kel_dbt
       star_schema:
+        +schema: kel_dbt
         intermediate:
           +materialized: view
     compatibility_views:
