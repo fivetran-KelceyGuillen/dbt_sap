@@ -2,8 +2,8 @@ version: 2
 
 sources:
   - name: sap
-    schema: "{{ var('sap_schema', 'sap') }}"
-    database: "{% if target.type != 'spark' %}{{ 'kel_lakehouse_1' }}{% endif %}"
+    schema: "kel_gcs_sap_hana_db_sapabap1"
+    database: "internal-sales"
 
     loader: fivetran
     config:
