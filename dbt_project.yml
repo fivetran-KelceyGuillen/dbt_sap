@@ -9,9 +9,11 @@ models:
     staging:
       +materialized: view
     extractor_reports:
+      +schema: kel_dbt
       intermediate:
         +materialized: view
     sales_and_procurement:
+      +schema: kel_dbt
       star_schema:
         intermediate:
           +materialized: view
