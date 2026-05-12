@@ -11,7 +11,7 @@ models:
     extractor_reports:
       +schema: kel_dbt
       intermediate:
-       +schema: kel_dbt
+        +schema: kel_dbt
         +materialized: view
     sales_and_procurement:
       +schema: kel_dbt
