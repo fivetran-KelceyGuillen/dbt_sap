@@ -4,24 +4,27 @@ version: '0.7.0'
 require-dbt-version: [">=1.3.0", "<3.0.0"]
 models:
   sap:
-    +materialized: table
+    +materialized: view
     +schema: kel_dbt
     staging:
       +materialized: view
     extractor_reports:
       +schema: kel_dbt
       intermediate:
+       +schema: kel_dbt
         +materialized: view
     sales_and_procurement:
       +schema: kel_dbt
       star_schema:
         +schema: kel_dbt
         intermediate:
+          +schema: kel_dbt
           +materialized: view
     compatibility_views:
       +schema: kel_dbt
       +materialized: view
       intermediate:
+        +schema: kel_dbt
         +materialized: ephemeral
         int_cosp__acdoca_derived:
           +materialized: view
