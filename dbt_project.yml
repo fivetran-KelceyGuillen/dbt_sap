@@ -15,9 +15,10 @@ models:
         +materialized: view
     sales_and_procurement:
       +schema: kel_dbt
+      +materialized: view
       star_schema:
         +schema: kel_dbt
-        +materialized: table
+        +materialized: view
         intermediate:
           +schema: kel_dbt
           +materialized: view
