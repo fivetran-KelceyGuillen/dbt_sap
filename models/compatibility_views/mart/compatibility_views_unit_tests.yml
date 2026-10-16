@@ -1,0 +1,55 @@
+unit_tests:
+
+  - name: test_mkpf_filters_to_material_documents_only
+    description: >
+      mkpf should only include matdoc rows where record_type = 'MDOC',
+      excluding other record types stored in the same extraction.
+    model: mkpf
+    given:
+      - input: ref('stg_sap__matdoc')
+        rows:
+          - {mandt: '100', mblnr: '5000000001', mjahr: '2024', record_type: MDOC}
+          - {mandt: '100', mblnr: '5000000002', mjahr: '2024', record_type: OTHER}
+    expect:
+      rows:
+        - {mblnr: '5000000001'}
+
+  - name: test_bsid_keeps_only_open_customer_items
+    description: >
+      bsid should only surface customer (koart = 'D') line items that are not
+      yet cleared (augbl = '') and are not flagged as deleted/archived
+      (h_bstat not in 'D'/'M').
+    model: bsid
+    given:
+      - input: ref('stg_sap__bseg')
+        rows:
+          - {mandt: '100', bukrs: '1000', kunnr: C1, gjahr: '2024', belnr: '0190000001', buzei: '001', koart: D, augbl: '', h_bstat: ''}
+          - {mandt: '100', bukrs: '1000', kunnr: C1, gjahr: '2024', belnr: '0190000002', buzei: '001', koart: D, augbl: '0190009999', h_bstat: ''}
+          - {mandt: '100', bukrs: '1000', kunnr: C1, gjahr: '2024', belnr: '0190000003', buzei: '001', koart: K, augbl: '', h_bstat: ''}
+      - input: ref('stg_sap__bkpf')
+        rows:
+          - {mandt: '100', bukrs: '1000', gjahr: '2024', belnr: '0190000001', budat: 2024-01-01, blart: DR}
+          - {mandt: '100', bukrs: '1000', gjahr: '2024', belnr: '0190000002', budat: 2024-01-01, blart: DR}
+          - {mandt: '100', bukrs: '1000', gjahr: '2024', belnr: '0190000003', budat: 2024-01-01, blart: DR}
+    expect:
+      rows:
+        - {belnr: '0190000001'}
+
+  - name: test_coep_excludes_plan_values_and_tags_derived_rows_as_actual
+    description: >
+      Rows sourced directly from COEP should drop plan/statistical value types
+      (04, U4, U1), while rows derived from ACDOCA are always unioned in as
+      wrttp = '04' regardless of their original value type.
+    model: coep
+    given:
+      - input: ref('stg_sap__coep')
+        rows:
+          - {mandt: '100', kokrs: K1, belnr: B1, buzei: '001', perio: '001', wrttp: '01', wtgbtr: 100}
+          - {mandt: '100', kokrs: K1, belnr: B2, buzei: '001', perio: '001', wrttp: '04', wtgbtr: 200}
+      - input: ref('int_coep__original')
+        rows:
+          - {mandt: '100', kokrs: K1, belnr: B3, buzei: '001', perio: '002', wtgbtr: 50}
+    expect:
+      rows:
+        - {belnr: B1, wrttp: '01'}
+        - {belnr: B3, wrttp: '04'}

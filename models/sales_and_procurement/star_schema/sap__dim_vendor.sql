@@ -1,6 +1,7 @@
 {{ config(enabled=var('sap_using_lfa1', true)) }}
 
 select 
+    client_id,
     vendor_id,
     country_key_id,
     name,
@@ -12,3 +13,4 @@ select
     group_key,
     vendor_account_group_id
 from {{ ref('int_sap__vendor') }}
+

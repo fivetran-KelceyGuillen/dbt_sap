@@ -8693,9 +8693,9 @@ models:
       - name: _cwm_erfmg
         description: Quantity in the entered unit of measure
       - name: _cwm_meins
-        description: 	Base unit of measure
+        description:   Base unit of measure
       - name: _cwm_menge
-        description: 	Quantity calculated in the base unit of measure in which stocks of the product are managed. 
+        description:   Quantity calculated in the base unit of measure in which stocks of the product are managed. 
       - name: ablad
         description: Unloading Point
       - name: aedat

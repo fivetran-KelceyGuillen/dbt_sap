@@ -41,6 +41,7 @@ with purchasing_document_header as (
 
 , final as (
     select
+        purchasing_document_header.client_id,
         purchasing_document_header.purchasing_document_id,
         purchasing_document_header.purchasing_document_category,
         purchasing_document_header.purchasing_document_type_id,
@@ -77,11 +78,13 @@ with purchasing_document_header as (
     left join purchasing_document_type
         on purchasing_document_header.purchasing_document_type_id = purchasing_document_type.purchasing_document_type_id 
         and purchasing_document_type.purch_doc_category_id = purchasing_document_header.purchasing_document_category 
+        and purchasing_document_header.client_id = purchasing_document_type.client_id
     {% endif %}
 
     {% if using_purchasing_group %}
     left join purchasing_group
         on purchasing_group.purchasing_group_id = purchasing_document_header.purchasing_group_id 
+        and purchasing_group.client_id = purchasing_document_header.client_id
     {% endif %}
 
     {% if using_purchasing_document_status %}

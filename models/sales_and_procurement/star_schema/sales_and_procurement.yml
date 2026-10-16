@@ -2,7 +2,17 @@ version: 2
 models:
   - name: sap__dim_customer
     description: Customer dimension table
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - customer_id
     columns:
+      - name: client_id
+        description: SAP client (mandt) the customer record belongs to
+        data_tests:
+          - not_null
       - name: customer_number
         description: Unique identifier of the customer in SAP
       - name: country_key_id
@@ -13,10 +23,22 @@ models:
         description: Customer’s city of residence
       - name: customer_id
         description: Surrogate key for the customer
+        data_tests:
+          - not_null
 
   - name: sap__dim_material
     description: Material master dimension table
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - material_id
     columns:
+      - name: client_id
+        description: SAP client (mandt) the material record belongs to
+        data_tests:
+          - not_null
       - name: material_number
         description: Unique identifier for the material
       - name: material_description
@@ -33,12 +55,26 @@ models:
         description: Unit of measure for weight
       - name: material_id
         description: Surrogate key for the material
+        data_tests:
+          - not_null
 
   - name: sap__dim_plant
     description: Plant/branch dimension table
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - plant_id
     columns:
+      - name: client_id
+        description: SAP client (mandt) the plant record belongs to
+        data_tests:
+          - not_null
       - name: plant_id
         description: Unique identifier for the plant
+        data_tests:
+          - not_null
       - name: plant_name
         description: Name of the plant
       - name: country_key_id
@@ -46,9 +82,21 @@ models:
 
   - name: sap__dim_purchasing_order
     description: Purchasing document header attributes
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - purchasing_document_id
     columns:
+      - name: client_id
+        description: SAP client (mandt) the purchasing document belongs to
+        data_tests:
+          - not_null
       - name: purchasing_document_id
         description: Unique ID of the purchasing document
+        data_tests:
+          - not_null
       - name: purchasing_document_category
         description: Category code of the purchasing document
       - name: purchasing_document_category_txt
@@ -74,27 +122,66 @@ models:
 
   - name: sap__dim_purchasing_organization
     description: Purchasing organization dimension
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - company_code_id
+              - purchasing_organization_id
     columns:
+      - name: client_id
+        description: SAP client (mandt) the purchasing organization belongs to
+        data_tests:
+          - not_null
       - name: company_code_id
         description: Company code assigned to the organization
+        data_tests:
+          - not_null
       - name: purchasing_organization_id
         description: ID of the purchasing organization
+        data_tests:
+          - not_null
       - name: description
         description: Description of the purchasing organization
 
   - name: sap__dim_rejection_reason
     description: Reasons for purchase/sales document rejections
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - reason_rejection_id
     columns:
+      - name: client_id
+        description: SAP client (mandt) the rejection reason belongs to
+        data_tests:
+          - not_null
       - name: reason_rejection_id
         description: Code for rejection reason
+        data_tests:
+          - not_null
       - name: rejection_reason_description
         description: Description of the rejection reason
 
   - name: sap__dim_vendor
     description: Vendor dimension table.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - vendor_id
     columns:
+      - name: client_id
+        description: SAP client (mandt) the vendor record belongs to
+        data_tests:
+          - not_null
       - name: vendor_id
         description: ID of the vendor
+        data_tests:
+          - not_null
       - name: country_key_id
         description: Country key of the vendor
       - name: name
@@ -116,11 +203,26 @@ models:
 
   - name: sap__fact_purchasing_order
     description: Line-level metrics for purchasing documents
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - purchasing_document_id
+              - purchasing_document_item_id
     columns:
+      - name: client_id
+        description: SAP client (mandt) the purchasing document belongs to
+        data_tests:
+          - not_null
       - name: purchasing_document_id
         description: ID of the purchasing document
+        data_tests:
+          - not_null
       - name: purchasing_document_item_id
         description: Item number in the purchasing document
+        data_tests:
+          - not_null
       - name: company_code_id
         description: Company code that created the order
       - name: currency_id
@@ -192,13 +294,32 @@ models:
 
   - name: sap__fact_sales_order
     description: Line-level sales order facts and metrics
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - sales_document_number
+              - sales_document_item
     columns:
+      - name: client_id
+        description: SAP client (mandt) the sales document belongs to
+        data_tests:
+          - not_null
       - name: sales_document_number
         description: Sales document number
+        data_tests:
+          - not_null
       - name: sales_document_item
         description: Sales document item number
+        data_tests:
+          - not_null
       - name: sd_document_category
         description: Sales document category (e.g. order, quote)
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['c', 'h']
       - name: sales_document_type_id
         description: Type of sales document
       - name: order_reason_id
@@ -263,3 +384,4 @@ models:
         description: Fivetran deletion marker
       - name: _fivetran_synced
         description: Fivetran sync timestamp
+

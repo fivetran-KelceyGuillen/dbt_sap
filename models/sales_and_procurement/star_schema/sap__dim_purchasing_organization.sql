@@ -1,6 +1,7 @@
 {{ config(enabled=var('sap_using_t024e', true)) }}
 
 select
+	client_id,
 	company_code_id,
     purchasing_organization_id,
     description
