@@ -621,86 +621,103 @@ models:
           type: categorical
     metrics:
       - name: purchase_order_quantity_total
+        description: Cantidad total pedida en órdenes de compra
         type: simple
         label: Cantidad Pedida en Compras
         agg: sum
         expr: purchase_order_quantity
 
       - name: purchase_order_amount_total
+        description: Monto total pedido en órdenes de compra
         type: simple
         label: Monto Pedido en Compras
         agg: sum
         expr: purchase_order_amount
       - name: purchase_delivered_quantity_total
+        description: Cantidad total entregada por el proveedor contra las órdenes de compra
         type: simple
         label: Cantidad Entregada en Compras
         agg: sum
         expr: purchasing_delivered_quantity
       - name: purchase_delivered_amount_total
+        description: Valor total de lo efectivamente entregado contra las órdenes de compra
         type: simple
         label: Monto Entregado en Compras
         agg: sum
         expr: purchase_delivered_amount
       - name: purchase_open_quantity_total
+        description: Cantidad total pedida que todavía no fue entregada
         type: simple
         label: Cantidad Abierta en Compras
         agg: sum
         expr: purchase_open_quantity
       - name: purchase_open_amount_total
+        description: Valor total de la cantidad pedida que todavía no fue entregada
         type: simple
         label: Monto Abierto en Compras
         agg: sum
         expr: purchase_open_amount
       - name: purchase_late_quantity_total
+        description: Cantidad total entregada después de la fecha de entrega programada
         type: simple
         label: Cantidad Entregada Tarde
         agg: sum
         expr: purchase_late_quantity
       - name: purchase_late_amount_total
+        description: Valor total de la cantidad entregada después de la fecha de entrega programada
         type: simple
         label: Monto Entregado Tarde
         agg: sum
         expr: purchase_late_amount
       - name: purchase_cancelled_quantity_total
+        description: Cantidad total cancelada en órdenes de compra
         type: simple
         label: Cantidad Cancelada en Compras
         agg: sum
         expr: cancel_purchase_quantity
       - name: purchase_cancelled_amount_total
+        description: Valor total cancelado en órdenes de compra
         type: simple
         label: Monto Cancelado en Compras
         agg: sum
         expr: cancel_purchase_amount
       - name: purchase_invoiced_amount_total
+        description: Monto total facturado por el proveedor contra las órdenes de compra
         type: simple
         label: Monto Facturado en Compras
         agg: sum
         expr: purchase_invoiced_amount
       - name: purchase_order_line_count
+        description: Cantidad de líneas de orden de compra
         type: simple
         label: Cantidad de Líneas de Orden de Compra
         agg: count
         expr: "1"
       - name: purchase_late_item_count
+        description: Cantidad de ítems de orden de compra entregados después de la fecha programada
         type: simple
         label: Cantidad de Ítems Entregados Tarde
         agg: sum
         expr: purchase_item_late_count
       - name: purchase_open_item_count
+        description: Cantidad de ítems de orden de compra todavía sin entregar
         type: simple
         label: Cantidad de Ítems Abiertos
         agg: sum
         expr: purchase_item_open_count
       - name: purchase_closed_item_count
+        description: Cantidad de ítems de orden de compra completamente entregados
         type: simple
         label: Cantidad de Ítems Cerrados
         agg: sum
         expr: purchase_item_closed_count
       - name: purchase_deliver_late_days_average
+        description: Promedio de días de atraso entre la fecha programada y la fecha real de recepción de mercancía
         type: simple
         label: Promedio de Días de Atraso en Entrega
         agg: average
         expr: purchase_deliver_late_days
+
       - name: purchase_late_delivery_rate
         description: Proporción de líneas de orden de compra que se entregaron tarde
         type: ratio
@@ -948,30 +965,36 @@ models:
     metrics:
 
       - name: sales_order_quantity_total
+        description: Cantidad total pedida en órdenes de venta
         type: simple
         label: Cantidad Pedida en Ventas
         agg: sum
         expr: order_quantity
       - name: sales_net_value_total
+        description: Valor neto total de las órdenes de venta
         type: simple
         label: Valor Neto de Ventas
         agg: sum
         expr: net_value
       - name: sales_net_price_average
+        description: Precio neto promedio por unidad vendida, sin ponderar por cantidad
         type: simple
         label: Precio Neto Promedio de Ventas
         agg: average
         expr: net_price
       - name: sales_gross_weight_total
+        description: Peso bruto total de los ítems vendidos
         type: simple
         label: Peso Bruto de Ventas
         agg: sum
         expr: gross_weight
       - name: sales_order_line_count
+        description: Cantidad de líneas de orden de venta
         type: simple
         label: Cantidad de Líneas de Orden de Venta
         agg: count
         expr: "1"
+
       - name: sales_net_value_per_unit
         description: Valor neto de ventas por unidad vendida (precio promedio ponderado por cantidad, a diferencia de sales_net_price_average que no está ponderado)
         type: ratio
@@ -1167,25 +1190,30 @@ models:
     metrics:
 
       - name: billing_net_value_total
+        description: Valor neto total facturado (signo invertido en anulaciones)
         type: simple
         label: Valor Neto de Facturación
         agg: sum
         expr: net_value
       - name: billing_quantity_total
+        description: Cantidad total facturada
         type: simple
         label: Cantidad Facturada
         agg: sum
         expr: billed_quantity
       - name: billing_tax_amount_total
+        description: Monto total de impuestos facturados (signo invertido en anulaciones)
         type: simple
         label: Monto de Impuestos Facturados
         agg: sum
         expr: tax_amount
       - name: billing_line_count
+        description: Cantidad de líneas de facturación
         type: simple
         label: Cantidad de Líneas de Facturación
         agg: count
         expr: "1"
+
       - name: billing_net_value_average
         description: Valor neto de facturación promedio por línea
         type: ratio
@@ -1376,25 +1404,30 @@ models:
     metrics:
 
       - name: delivery_net_value_total
+        description: Valor neto total despachado
         type: simple
         label: Valor Neto de Entregas
         agg: sum
         expr: net_value
       - name: delivery_quantity_total
+        description: Cantidad total despachada
         type: simple
         label: Cantidad Entregada
         agg: sum
         expr: delivery_quantity
       - name: delivery_gross_weight_total
+        description: Peso bruto total despachado
         type: simple
         label: Peso Bruto Entregado
         agg: sum
         expr: gross_weight
       - name: delivery_line_count
+        description: Cantidad de líneas de entrega
         type: simple
         label: Cantidad de Líneas de Entrega
         agg: count
         expr: "1"
+
       - name: delivery_net_value_average
         description: Valor neto de entregas promedio por línea
         type: ratio

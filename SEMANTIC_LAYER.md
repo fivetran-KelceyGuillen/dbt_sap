@@ -418,3 +418,23 @@ permite responder sin SQL preguntas como:
 - **`gross_margin_proxy_amount`** es explícitamente un proxy, no una cifra contable: compara el valor
   neto de ventas contra el monto de órdenes de compra, sin considerar costos de producción, mano de
   obra ni otros gastos — no reemplaza un cálculo de margen bruto real (GAAP).
+- **Resuelto: `purchase_to_sales_value_ratio` ya es confiable.** Daba un 6,091% (compras 60 veces
+  las ventas) porque 15 líneas de `EKPO` (0.04% del total) concentraban el 97.6% del monto total de
+  compras. No era un problema de tipos de datos como el de `netwr` en VBAP/VBRP, sino data real con
+  errores de carga evidentes:
+    - **30 líneas** con precio unitario de exactamente **$20,121,212.00** sobre el material
+      placeholder `000000000000000897` — los dígitos coinciden con `2012-12-12`, consistente con una
+      fecha tipeada por error en el campo de precio.
+    - **5 documentos** (`4500017422`, `4500017423`, `4500017425`, `4500017321`, `4500019247`) con
+      cantidades 1,000–1,000,000 veces más grandes que cualquier otra orden del mismo material al
+      mismo precio unitario (ej. material `GTS-N2-*`, que se usa normalmente en decenas de órdenes de
+      $1K-$50K) — consistente con un error de tipeo en la cantidad.
+
+  `sap__fact_purchasing_order.sql` ahora excluye ambos patrones: el de precio por condición
+  (`coalesce(net_order_price_val, 0) != 20121212`, para que agarre cualquier instancia futura del
+  mismo error) y el de cantidad por lista acotada de documentos (documentado en el propio SQL con el
+  razonamiento de cada exclusión). Con el filtro aplicado, `purchase_to_sales_value_ratio` da **73.17%**
+  — compras equivalentes a ~73 centavos por cada dólar de venta, una cifra de negocio plausible.
+  Pendiente: confirmar con el equipo de compras que estas exclusiones son correctas antes de dar el
+  número por definitivo en reportes externos.
+
