@@ -26,9 +26,19 @@ pa0007 as (
 
 pa0008 as (
 
+    -- Filtered to the standard Basic Pay subtype (0). Without this filter, a stray subty = '1'
+    -- record (found for a single employee, pernr 00100003, open-ended from 1997-08-01 to
+    -- 9999-12-31) overlaps every later date range and fans out the join below, breaking the
+    -- pernr/begda uniqueness test. subty = '0' covers 7,195 of 7,196 PA0008 rows (3,520 of 3,521
+    -- employees); the lone subty = '1' row looks like a leftover/erroneous record, not a real
+    -- second concurrent assignment (it duplicates the subty = '0' record's trfar/trfgb/trfgr with
+    -- only trfst blanked out).
     select *
-    from {{ ref('stg_sap__pa0008') }} 
+    from {{ ref('stg_sap__pa0008') }}
+    where subty = '0'
 ),
+
+
 
 pa0031 as (
 

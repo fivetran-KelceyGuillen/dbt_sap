@@ -9,10 +9,37 @@
 with purchasing_document_item as (
     select *
     from {{ ref('int_sap__purchasing_document_item') }}
+    where
+        -- Excluded: identified as bad/test data during analytics review, not real purchase
+        -- activity. Before this filter these lines accounted for 97.6% of total
+        -- purchase_order_amount ($629.99B of $645.36B), making purchase_to_sales_value_ratio
+        -- meaningless. Remove or narrow this filter once confirmed with the purchasing team.
+        --
+        -- 1) Unit price of exactly $20,121,212.00 on placeholder material '000000000000000897'
+        --    (30 lines, all sharing this exact price) -- the digits match 2012-12-12, strongly
+        --    suggesting a date was fat-fingered into the unit price field. Condition-based so it
+        --    catches every instance of this fingerprint, not just the ones found so far.
+        coalesce(net_order_price_val, 0) != 20121212
+
+        -- 2) Specific documents with quantities 1,000-1,000,000x larger than any other order of
+        --    the same material at the same unit price -- consistent with a quantity fat-finger
+        --    or stray test entry rather than real purchase volume:
+        --      - 4500017422/4500017423/4500017425 (materials GTS-N2-010/012/013/014, which are
+        --        otherwise used normally in dozens of $1K-$50K orders)
+        --      - 4500017321 (material HT1-S100546, 100,000,000 units -- appears nowhere else)
+        --      - 4500019247 (material HT-1000, 1,000,000 units -- 12x the largest legitimate
+        --        order of the same material, which tops out around 81,446 units)
+        and purchasing_document_id not in (
+            '4500017422', '4500017423', '4500017425',
+            '4500017321', '4500019247'
+        )
+
+
 
 {% if using_purchasing_document_header %}
 ), purchasing_document_header as (
     select *
+
     from {{ ref('int_sap__purchasing_document_header') }}
 {% endif %}
 
