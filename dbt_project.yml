@@ -34,10 +34,58 @@ models:
 vars:
   sap_schema: "kel_gcs_sap_hana_db_sapabap1"
   prefix_table_name: ""
+
+  # --- Source availability audit (confirmed via INFORMATION_SCHEMA.TABLES) ---
+  # The following SAP tables are not synced by this connector. Disabling them
+  # lets every model that depends on them -- directly or as an optional
+  # enrichment join -- degrade gracefully (skip the join, or disable itself
+  # entirely if the table is its sole source) instead of erroring with
+  # "table not found". Re-enable (remove the override) once the corresponding
+  # SAP module is connected in Fivetran.
+  sap_using_acdoca: false
+  sap_using_coep: false
+  sap_using_marc: false
+  sap_using_mchb: false
+  sap_using_mchp: false
+  sap_using_matdoc: false
+  sap_using_matdoc_extract: false
+  sap_using_faglflexa: false
+  sap_using_faglflext: false
+  sap_using_finsc_cmp_versnd: false
+  sap_using_finsc_ledger_rep: false
+  sap_using_finsc_ld_cmp: false
+  sap_using_tj01: false
+  sap_using_tka01: false
+  sap_using_t000: false
+  sap_using_t006: false
+  sap_using_t503: false
+  sap_using_ska1: false
+  sap_using_cosp_bak: false
+  sap_using_prps: false
+  sap_using_pa0000: false
+  sap_using_pa0001: false
+  sap_using_pa0007: false
+  sap_using_pa0008: false
+  sap_using_pa0031: false
+  sap_using_bsak_bck: false
+  # sapsll_clsnr's source config uses a typo'd double-underscore var name
+  # (sap_using__sapsll_clsnr) while its staging model checks the normal
+  # single-underscore name -- set both so the source and model agree.
+  sap_using__sapsll_clsnr: false
+  sap_using_sapsll_clsnr: false
+
+  sap_using_sapsll_maritc: false
+  sap_using_sapsll_nosca: false
+  sap_using_sapsll_tunos: false
   # t161t (purchasing document type texts) is not synced for this connector;
   # disabling it lets int_sap__purchasing_document_type / sap__dim_purchasing_order
   # degrade gracefully (purchasing_document_type_text = null) instead of erroring.
-  #sap_using_t161t: false
+  sap_using_t161t: false
+
+  # bsad_bck exists under a different identifier for this connector (bsad_bak,
+  # not bsad_bck) -- point the source at the real table instead of disabling it.
+  sap_bsad_bck_identifier: "bsad_bak"
+
   sap:
     acdoca: "{{ source('sap', 'acdoca') }}"
     bkpf: "{{ source('sap', 'bkpf') }}"

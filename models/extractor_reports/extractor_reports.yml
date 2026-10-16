@@ -17,7 +17,8 @@ models:
         - name: company
           type: primary
           expr: "concat(mandt, '-', bukrs)"
-          label: Company Code
+          label: Código de Sociedad
+
     columns:
 
       - name: mandt
@@ -108,7 +109,8 @@ models:
         - name: customer
           type: primary
           expr: "concat(mandt, '-', kunnr)"
-          label: Customer
+          label: Cliente
+
     columns:
 
       - name: mandt
@@ -1034,7 +1036,8 @@ models:
         - name: vendor
           type: primary
           expr: "concat(mandt, '-', lifnr)"
-          label: Vendor
+          label: Proveedor
+
     columns:
 
       - name: mandt
