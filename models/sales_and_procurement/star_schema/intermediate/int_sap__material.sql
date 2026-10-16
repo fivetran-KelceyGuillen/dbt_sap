@@ -264,7 +264,8 @@ with mara as (
     left join makt
         on mara.mandt = makt.mandt
         and mara.matnr = makt.matnr
-        and makt.spras = 'e'
+        and upper(makt.spras) = 'E'
+
     {% endif %}
 )
 
