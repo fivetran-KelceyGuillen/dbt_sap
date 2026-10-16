@@ -24,14 +24,18 @@ unit_tests:
   - name: test_fact_sales_order_sign_flips_by_document_category
     description: >
       Order quantity and net value are reported as-is for regular sales
-      orders (sd_document_category = 'c') and are flipped to negative for
-      returns/credit documents (sd_document_category = 'h').
+      orders (sd_document_category = 'C') and are flipped to negative for
+      returns/credit documents (sd_document_category = 'H'). The comparison
+      is case-insensitive in the model (lower(sd_document_category) = 'c'),
+      so this also covers mixed-case source data.
     model: sap__fact_sales_order
     given:
       - input: ref('int_sap__sales_document_header')
         rows:
-          - {client_id: '100', sales_document_id: '0000000001', sd_document_category: c, sales_organization_id: '1000', distribution_channel_id: '10', division_id: '00', sold_to_party_id: '0000000100', document_date: 2024-01-01, requested_delivery_date: 2024-01-05, created_date: 2024-01-01, created_by: jdoe}
-          - {client_id: '100', sales_document_id: '0000000002', sd_document_category: h, sales_organization_id: '1000', distribution_channel_id: '10', division_id: '00', sold_to_party_id: '0000000100', document_date: 2024-02-01, requested_delivery_date: 2024-02-05, created_date: 2024-02-01, created_by: jdoe}
+          - {client_id: '100', sales_document_id: '0000000001', sd_document_category: C, sales_organization_id: '1000', distribution_channel_id: '10', division_id: '00', sold_to_party_id: '0000000100', document_date: 2024-01-01, requested_delivery_date: 2024-01-05, created_date: 2024-01-01, created_by: jdoe}
+          - {client_id: '100', sales_document_id: '0000000002', sd_document_category: H, sales_organization_id: '1000', distribution_channel_id: '10', division_id: '00', sold_to_party_id: '0000000100', document_date: 2024-02-01, requested_delivery_date: 2024-02-05, created_date: 2024-02-01, created_by: jdoe}
+
+
       - input: ref('int_sap__sales_document_item')
         rows:
           - {client_id: '100', sales_document_id: '0000000001', sales_document_item_id: '000010', material_id: MAT1, base_uom_id: EA, order_quantity: 10, sales_uom_id: EA, net_val: 100, net_price_val: 10, sd_document_currency_id: USD, returns_item: '', _fivetran_deleted: false}

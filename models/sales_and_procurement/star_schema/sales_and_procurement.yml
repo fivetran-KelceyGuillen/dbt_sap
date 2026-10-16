@@ -17,7 +17,8 @@ models:
         - name: customer
           type: primary
           expr: "concat(client_id, '-', customer_id)"
-          label: Customer
+          label: Cliente
+
     columns:
       - name: client_id
         description: SAP client (mandt) the customer record belongs to
@@ -119,7 +120,8 @@ models:
         - name: plant
           type: primary
           expr: "concat(client_id, '-', plant_id)"
-          label: Plant
+          label: Planta
+
     columns:
       - name: client_id
         description: SAP client (mandt) the plant record belongs to
@@ -157,11 +159,12 @@ models:
         - name: purchasing_document
           type: primary
           expr: "concat(client_id, '-', purchasing_document_id)"
-          label: Purchasing Document
+          label: Documento de Compra
         - name: company
           type: foreign
           expr: "concat(client_id, '-', company_code_id)"
-          label: Company Code
+          label: Código de Sociedad
+
     columns:
       - name: client_id
         description: SAP client (mandt) the purchasing document belongs to
@@ -234,11 +237,12 @@ models:
         - name: purchasing_organization
           type: primary
           expr: "concat(client_id, '-', company_code_id, '-', purchasing_organization_id)"
-          label: Purchasing Organization
+          label: Organización de Compras
         - name: company
           type: foreign
           expr: "concat(client_id, '-', company_code_id)"
-          label: Company Code
+          label: Código de Sociedad
+
     columns:
       - name: client_id
         description: SAP client (mandt) the purchasing organization belongs to
@@ -276,7 +280,8 @@ models:
         - name: rejection_reason
           type: primary
           expr: "concat(client_id, '-', reason_rejection_id)"
-          label: Rejection Reason
+          label: Motivo de Rechazo
+
     columns:
       - name: client_id
         description: SAP client (mandt) the rejection reason belongs to
@@ -310,7 +315,8 @@ models:
         - name: vendor
           type: primary
           expr: "concat(client_id, '-', vendor_id)"
-          label: Vendor
+          label: Proveedor
+
     columns:
       - name: client_id
         description: SAP client (mandt) the vendor record belongs to
@@ -378,11 +384,11 @@ models:
         - name: purchasing_order_line
           type: primary
           expr: "concat(client_id, '-', purchasing_document_id, '-', purchasing_document_item_id)"
-          label: Purchasing Order Line
+          label: Línea de Orden de Compra
         - name: purchasing_document
           type: foreign
           expr: "concat(client_id, '-', purchasing_document_id)"
-          label: Purchasing Document
+          label: Documento de Compra
         - name: material
           type: foreign
           expr: "concat(client_id, '-', material_id)"
@@ -390,19 +396,20 @@ models:
         - name: plant
           type: foreign
           expr: "concat(client_id, '-', plant_id)"
-          label: Plant
+          label: Planta
         - name: vendor
           type: foreign
           expr: "concat(client_id, '-', vendor_id)"
-          label: Vendor
+          label: Proveedor
         - name: purchasing_organization
           type: foreign
           expr: "concat(client_id, '-', company_code_id, '-', purchasing_organization_id)"
-          label: Purchasing Organization
+          label: Organización de Compras
         - name: company
           type: foreign
           expr: "concat(client_id, '-', company_code_id)"
-          label: Company Code
+          label: Código de Sociedad
+
     columns:
       - name: client_id
         description: SAP client (mandt) the purchasing document belongs to
@@ -512,117 +519,117 @@ models:
     metrics:
       - name: purchase_order_quantity_total
         type: simple
-        label: Purchase Order Quantity
+        label: Cantidad Pedida en Compras
         agg: sum
         expr: purchase_order_quantity
       - name: purchase_order_amount_total
         type: simple
-        label: Purchase Order Amount
+        label: Monto Pedido en Compras
         agg: sum
         expr: purchase_order_amount
       - name: purchase_delivered_quantity_total
         type: simple
-        label: Purchase Delivered Quantity
+        label: Cantidad Entregada en Compras
         agg: sum
         expr: purchasing_delivered_quantity
       - name: purchase_delivered_amount_total
         type: simple
-        label: Purchase Delivered Amount
+        label: Monto Entregado en Compras
         agg: sum
         expr: purchase_delivered_amount
       - name: purchase_open_quantity_total
         type: simple
-        label: Purchase Open Quantity
+        label: Cantidad Abierta en Compras
         agg: sum
         expr: purchase_open_quantity
       - name: purchase_open_amount_total
         type: simple
-        label: Purchase Open Amount
+        label: Monto Abierto en Compras
         agg: sum
         expr: purchase_open_amount
       - name: purchase_late_quantity_total
         type: simple
-        label: Purchase Late Quantity
+        label: Cantidad Entregada Tarde
         agg: sum
         expr: purchase_late_quantity
       - name: purchase_late_amount_total
         type: simple
-        label: Purchase Late Amount
+        label: Monto Entregado Tarde
         agg: sum
         expr: purchase_late_amount
       - name: purchase_cancelled_quantity_total
         type: simple
-        label: Purchase Cancelled Quantity
+        label: Cantidad Cancelada en Compras
         agg: sum
         expr: cancel_purchase_quantity
       - name: purchase_cancelled_amount_total
         type: simple
-        label: Purchase Cancelled Amount
+        label: Monto Cancelado en Compras
         agg: sum
         expr: cancel_purchase_amount
       - name: purchase_invoiced_amount_total
         type: simple
-        label: Purchase Invoiced Amount
+        label: Monto Facturado en Compras
         agg: sum
         expr: purchase_invoiced_amount
       - name: purchase_order_line_count
         type: simple
-        label: Purchase Order Line Count
+        label: Cantidad de Líneas de Orden de Compra
         agg: count
         expr: "1"
       - name: purchase_late_item_count
         type: simple
-        label: Purchase Late Item Count
+        label: Cantidad de Ítems Entregados Tarde
         agg: sum
         expr: purchase_item_late_count
       - name: purchase_open_item_count
         type: simple
-        label: Purchase Open Item Count
+        label: Cantidad de Ítems Abiertos
         agg: sum
         expr: purchase_item_open_count
       - name: purchase_closed_item_count
         type: simple
-        label: Purchase Closed Item Count
+        label: Cantidad de Ítems Cerrados
         agg: sum
         expr: purchase_item_closed_count
       - name: purchase_deliver_late_days_average
         type: simple
-        label: Average Purchase Deliver Late Days
+        label: Promedio de Días de Atraso en Entrega
         agg: average
         expr: purchase_deliver_late_days
       - name: purchase_late_delivery_rate
-        description: Share of purchase order lines that were delivered late
+        description: Proporción de líneas de orden de compra que se entregaron tarde
         type: ratio
-        label: Purchase Late Delivery Rate
+        label: Tasa de Entrega Tardía en Compras
         numerator: purchase_late_item_count
         denominator: purchase_order_line_count
       - name: purchase_cancellation_rate
-        description: Share of ordered value that was subsequently cancelled
+        description: Proporción del valor pedido que fue cancelado posteriormente
         type: ratio
-        label: Purchase Cancellation Rate
+        label: Tasa de Cancelación en Compras
         numerator: purchase_cancelled_amount_total
         denominator: purchase_order_amount_total
       - name: purchase_order_amount_cumulative
-        description: Running total of purchase order amount across all time
+        description: Total acumulado del monto de órdenes de compra a lo largo de todo el período
         type: cumulative
-        label: Cumulative Purchase Order Amount (All-Time)
+        label: Monto Acumulado de Órdenes de Compra (Histórico)
         input_metric: purchase_order_amount_total
       - name: purchase_order_amount_mtd
-        description: Month-to-date purchase order amount
+        description: Monto acumulado de órdenes de compra desde el inicio del mes
         type: cumulative
-        label: Purchase Order Amount (MTD)
+        label: Monto de Órdenes de Compra (Acum. del Mes)
         grain_to_date: month
         input_metric: purchase_order_amount_total
       - name: purchase_order_amount_l30d
-        description: Trailing 30-day purchase order amount
+        description: Monto de órdenes de compra en una ventana móvil de 30 días
         type: cumulative
-        label: Purchase Order Amount (L30D)
+        label: Monto de Órdenes de Compra (Últimos 30 Días)
         window: 30 days
         input_metric: purchase_order_amount_total
       - name: purchase_order_amount_growth_mom
-        description: Percentage growth in purchase order amount compared to the prior month
+        description: Crecimiento porcentual del monto de órdenes de compra respecto al mes anterior
         type: derived
-        label: Purchase Order Amount Growth % M/M
+        label: Crecimiento % del Monto de Compras M/M
         expr: (current_month - prior_month) * 100 / nullif(prior_month, 0)
         input_metrics:
           - name: purchase_order_amount_total
@@ -631,9 +638,9 @@ models:
             alias: prior_month
             offset_window: 1 month
       - name: purchase_order_amount_growth_yoy
-        description: Percentage growth in purchase order amount compared to the same period one year ago
+        description: Crecimiento porcentual del monto de órdenes de compra respecto al mismo período del año anterior
         type: derived
-        label: Purchase Order Amount Growth % Y/Y
+        label: Crecimiento % del Monto de Compras A/A
         expr: (current_year - prior_year) * 100 / nullif(prior_year, 0)
         input_metrics:
           - name: purchase_order_amount_total
@@ -642,29 +649,27 @@ models:
             alias: prior_year
             offset_window: 1 year
       - name: purchase_order_average_value
-        description: Average purchase order amount per order line
+        description: Monto promedio de la orden de compra por línea de pedido
         type: ratio
-        label: Average Purchase Order Value
+        label: Valor Promedio de Orden de Compra
         numerator: purchase_order_amount_total
         denominator: purchase_order_line_count
       - name: purchase_fulfillment_rate
-        description: Share of ordered value that has actually been delivered
+        description: Proporción del valor pedido que efectivamente fue entregado
         type: ratio
-        label: Purchase Fulfillment Rate
+        label: Tasa de Cumplimiento de Compras
         numerator: purchase_delivered_amount_total
         denominator: purchase_order_amount_total
       - name: purchase_net_order_value
-        description: Purchase order amount net of cancellations
+        description: Monto de la orden de compra neto de cancelaciones
         type: derived
-        label: Net Purchase Order Value
+        label: Valor Neto de la Orden de Compra
         expr: ordered - cancelled
         input_metrics:
           - name: purchase_order_amount_total
             alias: ordered
           - name: purchase_cancelled_amount_total
             alias: cancelled
-
-
 
 
 
@@ -687,11 +692,11 @@ models:
         - name: sales_order_line
           type: primary
           expr: "concat(client_id, '-', sales_document_id, '-', sales_document_item)"
-          label: Sales Order Line
+          label: Línea de Orden de Venta
         - name: customer
           type: foreign
           expr: "concat(client_id, '-', sold_to_customer_id)"
-          label: Customer
+          label: Cliente
         - name: material
           type: foreign
           expr: "concat(client_id, '-', material_id)"
@@ -699,7 +704,8 @@ models:
         - name: plant
           type: foreign
           expr: "concat(client_id, '-', plant_id)"
-          label: Plant
+          label: Planta
+
     columns:
       - name: client_id
         description: SAP client (mandt) the sales document belongs to
@@ -716,13 +722,14 @@ models:
         data_tests:
           - not_null
       - name: sd_document_category
-        description: Sales document category (e.g. order, quote)
+        description: Sales document category (e.g. order, quote). SAP exposes this as an uppercase single-letter code (C = order, H = returns credit memo).
         data_tests:
           - accepted_values:
               arguments:
-                values: ['c', 'h']
+                values: ['C', 'H']
         dimension:
           type: categorical
+
       - name: sales_document_type_id
         description: Type of sales document
         dimension:
@@ -837,56 +844,56 @@ models:
     metrics:
       - name: sales_order_quantity_total
         type: simple
-        label: Sales Order Quantity
+        label: Cantidad Pedida en Ventas
         agg: sum
         expr: order_quantity
       - name: sales_net_value_total
         type: simple
-        label: Sales Net Value
+        label: Valor Neto de Ventas
         agg: sum
         expr: net_value
       - name: sales_net_price_average
         type: simple
-        label: Average Sales Net Price
+        label: Precio Neto Promedio de Ventas
         agg: average
         expr: net_price
       - name: sales_gross_weight_total
         type: simple
-        label: Sales Gross Weight
+        label: Peso Bruto de Ventas
         agg: sum
         expr: gross_weight
       - name: sales_order_line_count
         type: simple
-        label: Sales Order Line Count
+        label: Cantidad de Líneas de Orden de Venta
         agg: count
         expr: "1"
       - name: sales_net_value_per_unit
-        description: Net sales value per unit sold (quantity-weighted average price, as opposed to the unweighted sales_net_price_average)
+        description: Valor neto de ventas por unidad vendida (precio promedio ponderado por cantidad, a diferencia de sales_net_price_average que no está ponderado)
         type: ratio
-        label: Net Sales Value per Unit
+        label: Valor Neto de Ventas por Unidad
         numerator: sales_net_value_total
         denominator: sales_order_quantity_total
       - name: sales_net_value_cumulative
-        description: Running total of sales net value across all time
+        description: Total acumulado del valor neto de ventas a lo largo de todo el período
         type: cumulative
-        label: Cumulative Sales Net Value (All-Time)
+        label: Valor Neto de Ventas Acumulado (Histórico)
         input_metric: sales_net_value_total
       - name: sales_net_value_mtd
-        description: Month-to-date sales net value
+        description: Valor neto de ventas acumulado desde el inicio del mes
         type: cumulative
-        label: Sales Net Value (MTD)
+        label: Valor Neto de Ventas (Acum. del Mes)
         grain_to_date: month
         input_metric: sales_net_value_total
       - name: sales_net_value_l7d
-        description: Trailing 7-day sales net value
+        description: Valor neto de ventas en una ventana móvil de 7 días
         type: cumulative
-        label: Sales Net Value (L7D)
+        label: Valor Neto de Ventas (Últimos 7 Días)
         window: 7 days
         input_metric: sales_net_value_total
       - name: sales_net_value_growth_mom
-        description: Percentage growth in sales net value compared to the prior month
+        description: Crecimiento porcentual del valor neto de ventas respecto al mes anterior
         type: derived
-        label: Sales Net Value Growth % M/M
+        label: Crecimiento % del Valor Neto de Ventas M/M
         expr: (current_month - prior_month) * 100 / nullif(prior_month, 0)
         input_metrics:
           - name: sales_net_value_total
@@ -895,9 +902,9 @@ models:
             alias: prior_month
             offset_window: 1 month
       - name: sales_net_value_growth_yoy
-        description: Percentage growth in sales net value compared to the same period one year ago
+        description: Crecimiento porcentual del valor neto de ventas respecto al mismo período del año anterior
         type: derived
-        label: Sales Net Value Growth % Y/Y
+        label: Crecimiento % del Valor Neto de Ventas A/A
         expr: (current_year - prior_year) * 100 / nullif(prior_year, 0)
         input_metrics:
           - name: sales_net_value_total
@@ -906,39 +913,41 @@ models:
             alias: prior_year
             offset_window: 1 year
       - name: sales_average_order_value
-        description: Average net sales value per order line
+        description: Valor neto de ventas promedio por línea de orden
         type: ratio
-        label: Average Sales Order Value
+        label: Valor Promedio de Orden de Venta
         numerator: sales_net_value_total
         denominator: sales_order_line_count
       - name: sales_returns_value_total
-        description: Net sales value for lines flagged as returns
+        description: Valor neto de ventas de las líneas marcadas como devolución
         type: simple
-        label: Sales Returns Value
+        label: Valor de Devoluciones de Ventas
         agg: sum
         expr: net_value
         filter: |
           {{ Dimension('sales_order_line__returns_item') }} != ''
       - name: sales_return_rate
-        description: Returns value as a share of total sales net value
+        description: Valor de devoluciones como proporción del valor neto total de ventas
         type: ratio
-        label: Sales Return Rate
+        label: Tasa de Devolución de Ventas
         numerator: sales_returns_value_total
         denominator: sales_net_value_total
 
 
 
+
+
 metrics:
   - name: purchase_to_sales_value_ratio
-    description: Purchase order value as a ratio of sales net value -- a cross-model view of spend relative to revenue
+    description: Monto de órdenes de compra como proporción del valor neto de ventas -- una vista cruzada entre gasto e ingresos
     type: ratio
-    label: Purchase-to-Sales Value Ratio
+    label: Relación Compras/Ventas
     numerator: purchase_order_amount_total
     denominator: sales_net_value_total
   - name: gross_margin_proxy_amount
-    description: Rough absolute spread between sales net value and purchase order amount -- a cross-model proxy for margin, not a GAAP figure
+    description: Diferencia absoluta aproximada entre el valor neto de ventas y el monto de órdenes de compra -- un proxy de margen entre modelos, no es una cifra contable (GAAP)
     type: derived
-    label: Gross Margin Proxy Amount
+    label: Monto Proxy de Margen Bruto
     expr: revenue - spend
     input_metrics:
       - name: sales_net_value_total
