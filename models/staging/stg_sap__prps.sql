@@ -15,6 +15,7 @@ fields as (
         _fivetran_sap_archived,
         cast(mandt as {{ dbt.type_string() }}) as mandt,
         pspnr,
+
         pbukr,
         kappl,
         usr11,

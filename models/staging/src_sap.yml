@@ -2254,51 +2254,52 @@ sources:
         identifier: "{{ var('sap_dd07l_identifier', 'dd07l') }}"
         config:
           enabled: "{{ var('sap_using_dd07l', true) }}"
-        description: Domain values
+        description: Valores de dominio
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: as4vers
-            description: Active version
+            description: Versión activa
           - name: domname
-            description: Domain name
+            description: Nombre del dominio
           - name: domvalue_l
-            description: Value of domain
+            description: Valor del dominio
           - name: hvr_change_time
-            description: HVR change timestamp
+            description: Marca de tiempo de cambio HVR
 
       - name: dd07t
         identifier: "{{ var('sap_dd07t_identifier', 'dd07t') }}"
         config:
           enabled: "{{ var('sap_using_dd07t', true) }}"
-        description: Texts for domain values
+        description: Textos de los valores de dominio
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: as4local
-            description: Indicator of local object (not transported between systems)
+            description: Indicador de objeto local (no transportado entre sistemas)
           - name: as4vers
-            description: Active version
+            description: Versión activa
           - name: ddlanguage
-            description: Language key
+            description: Clave de idioma
           - name: ddtext
-            description: Text
+            description: Texto
           - name: domname
-            description: Domain name
+            description: Nombre del dominio
           - name: domvalue_l
-            description: Domain value
+            description: Valor del dominio
           - name: hvr_change_time
-            description: HVR change timestamp
+            description: Marca de tiempo de cambio HVR
           - name: valpos
-            description: Value position within the domain
+            description: Posición del valor dentro del dominio
+
 
       - name: ekbe
         identifier: "{{ var('sap_ekbe_identifier', 'ekbe') }}"
@@ -4711,22 +4712,24 @@ sources:
         identifier: "{{var('prefix_table_name') ~ 'makt'}}"
         config:
           enabled: "{{ var('sap_using_makt', true) }}"
-        description: Material Descriptions
+        description: Descripciones de materiales
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: maktx
-            description: Material description
+            description: Descripción del material
           - name: mandt
-            description: Client
+            description: Mandante
           - name: matnr
-            description: Material number
+            description: Número de material
           - name: spras
-            description: Language key
+            description: Clave de idioma
+
+
 
       - name: mara
         identifier: "{{var('prefix_table_name') ~ 'mara'}}"
@@ -6451,331 +6454,336 @@ sources:
         identifier: "{{ var('sap_t024_identifier', 't024') }}"
         config:
           enabled: "{{ var('sap_using_t024', true) }}"
-        description: Purchasing groups
+        description: Grupos de compras
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_sap_archived
-            description: Fivetran SAP archive marker
+            description: Marca de archivo SAP de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: ekgrp
-            description: Purchasing group
+            description: Grupo de compras
           - name: eknam
-            description: Name of purchasing group
+            description: Nombre del grupo de compras
           - name: ektel
-            description: Telephone number
+            description: Número de teléfono
           - name: ldest
-            description: Logical destination
+            description: Destino lógico
           - name: mandt
-            description: Client
+            description: Mandante
           - name: smtp_addr
-            description: Email address
+            description: Dirección de correo electrónico
           - name: tel_extens
-            description: Telephone extension
+            description: Extensión telefónica
           - name: tel_number
-            description: Telephone number
+            description: Número de teléfono
           - name: telfx
-            description: Fax number
+            description: Número de fax
 
       - name: t024e
         identifier: "{{ var('sap_t024e_identifier', 't024e') }}"
         config:
           enabled: "{{ var('sap_using_t024e', true) }}"
-        description: Purchasing organization text
+        description: Texto de organización de compras
         columns:
           - name: ekorg
-            description: Purchasing organization
+            description: Organización de compras
           - name: mandt
-            description: Client
+            description: Mandante
           - name: ekotx
-            description: Description of the purchasing organization
+            description: Descripción de la organización de compras
           - name: txfus
-            description: Function for text determination
+            description: Función para determinación de texto
           - name: txgru
-            description: Text group
+            description: Grupo de texto
           - name: bpeff
-            description: Effective date of text
+            description: Fecha efectiva del texto
           - name: txkop
-            description: Copying rule for text
+            description: Regla de copia para texto
           - name: kalse
-            description: Access sequence number
+            description: Número de secuencia de acceso
           - name: txadr
-            description: Text address number
+            description: Número de dirección del texto
           - name: mkals
-            description: Sequence for access
+            description: Secuencia de acceso
           - name: bukrs
-            description: Company code
+            description: Sociedad
           - name: bukrs_ntr
-            description: Company code description (non-translation ready)
+            description: Descripción de la sociedad (no apta para traducción)
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: _fivetran_sap_archived
-            description: Fivetran SAP archive marker
+            description: Marca de archivo SAP de Fivetran
 
       - name: t134
         identifier: "{{var('prefix_table_name') ~ 't134'}}"
         config:
           enabled: "{{ var('sap_using_t134', true) }}"
-        description: Material types
+        description: Tipos de material
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: aranz
-            description: Layout indicator for material master
+            description: Indicador de diseño para el maestro de materiales
           - name: ardel
-            description: Flag for deletion of layout
+            description: Marca para eliminación del diseño
           - name: begru
-            description: Authorization group
+            description: Grupo de autorización
           - name: bsext
-            description: External number assignment allowed
+            description: Asignación de número externo permitida
           - name: bsint
-            description: Internal number assignment allowed
+            description: Asignación de número interno permitida
           - name: cchis
-            description: Change document indicator
+            description: Indicador de documento de modificaciones
           - name: chneu
-            description: Indicator (New entries allowed)
+            description: Indicador (se permiten nuevas entradas)
           - name: class
-            description: Material type class
+            description: Clase del tipo de material
           - name: ctype
-            description: Classification type
+            description: Tipo de clasificación
           - name: ekalr
-            description: Costing indicator
+            description: Indicador de cálculo de costos
           - name: envop
-            description: Environmentally relevant
+            description: Relevante para el medio ambiente
           - name: flref
-            description: Material type references another
+            description: El tipo de material hace referencia a otro
           - name: hvr_change_time
-            description: HVR change timestamp
+            description: Marca de tiempo de cambio HVR
           - name: hvr_is_deleted
-            description: HVR deletion flag
+            description: Marca de eliminación HVR
           - name: izust
-            description: Status for inventory management
+            description: Estado para la gestión de inventario
           - name: kkref
-            description: Reference key for variant configuration
+            description: Clave de referencia para configuración de variantes
           - name: kzgrp
-            description: Group material type
+            description: Tipo de material de grupo
           - name: kzkfg
-            description: Configurable material indicator
+            description: Indicador de material configurable
           - name: kzmpn
-            description: Manufacturer part number allowed
+            description: Número de pieza del fabricante permitido
           - name: kzpip
-            description: Pipeline material indicator
+            description: Indicador de material de tubería
           - name: kzprc
-            description: Pricing allowed indicator
+            description: Indicador de fijación de precios permitida
           - name: kzrac
-            description: Returnable packaging indicator
+            description: Indicador de embalaje retornable
           - name: kzvpr
-            description: Valuation allowed indicator
+            description: Indicador de valoración permitida
           - name: mandt
-            description: Client
+            description: Mandante
           - name: mbref
-            description: Material type reference
+            description: Referencia de tipo de material
           - name: mstae
-            description: Cross-plant material status
+            description: Estado de material entre centros
           - name: mtart
-            description: Material type
+            description: Tipo de material
           - name: mtref
-            description: Reference material type
+            description: Tipo de material de referencia
           - name: numke
-            description: External number range key
+            description: Clave de rango de números externo
           - name: numki
-            description: Internal number range key
+            description: Clave de rango de números interno
           - name: prdru
-            description: Period indicator for price determination
+            description: Indicador de período para determinación de precios
           - name: pstat
-            description: Maintenance status
+            description: Estado de mantenimiento
           - name: vmtpo
-            description: Group material type for variants
+            description: Tipo de material de grupo para variantes
           - name: vnumke
-            description: External number range (variant)
+            description: Rango de números externo (variante)
           - name: vnumki
-            description: Internal number range (variant)
+            description: Rango de números interno (variante)
           - name: vprsv
-            description: Price control indicator
+            description: Indicador de control de precios
           - name: vtype
-            description: Variant type
+            description: Tipo de variante
           - name: wmakg
-            description: Weight unit group
+            description: Grupo de unidad de peso
 
       - name: t134t
         identifier: "{{var('prefix_table_name') ~ 't134t'}}"
         config:
           enabled: "{{ var('sap_using_t134t', true) }}"
-        description: Material type descriptions
+        description: Descripciones de tipos de material
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: mandt
-            description: Client
+            description: Mandante
           - name: mtart
-            description: Material type
+            description: Tipo de material
           - name: mtbez
-            description: Description of material type
+            description: Descripción del tipo de material
           - name: spras
-            description: Language key
+            description: Clave de idioma
+
+
 
       - name: t161
         identifier: "{{ var('sap_t161_identifier', 't161') }}"
         config:
           enabled: "{{ var('sap_using_t161', true) }}"
-        description: Purchasing document types
+        description: Tipos de documento de compras
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: _sapmp_atnam
-            description: SAP MP attribute name
+            description: Nombre de atributo SAP MP
           - name: _sapmp_ceact
-            description: SAP MP change evaluation active
+            description: Evaluación de cambios activa en SAP MP
           - name: _sapmp_gauf
-            description: SAP MP default value indicator
+            description: Indicador de valor por defecto SAP MP
           - name: _sapmp_pausw
-            description: SAP MP pause switch
+            description: Interruptor de pausa SAP MP
           - name: _sapmp_pdact
-            description: SAP MP document active
+            description: Documento activo SAP MP
           - name: _sapmp_pprot
-            description: SAP MP processing type
+            description: Tipo de procesamiento SAP MP
           - name: _sapmp_puser
-            description: SAP MP user field
+            description: Campo de usuario SAP MP
           - name: abgebot
-            description: Quotation indicator
+            description: Indicador de cotización
           - name: abvor
-            description: Quotation required before order
+            description: Cotización requerida antes de la orden
           - name: ar_object
-            description: Archiving object
+            description: Objeto de archivado
           - name: brefn
-            description: Reference profile for external system
+            description: Perfil de referencia para sistema externo
           - name: bsakz
-            description: Collective number indicator
+            description: Indicador de número colectivo
           - name: bsart
-            description: Document type
+            description: Tipo de documento
           - name: bstyp
-            description: Document category
+            description: Categoría de documento
           - name: cp_aktive
-            description: Central contract active
+            description: Contrato central activo
           - name: cptype
-            description: Central contract type
+            description: Tipo de contrato central
           - name: fls_rsto
-            description: Release strategy origin
+            description: Origen de la estrategia de liberación
           - name: fsh_dpr_detpro
-            description: Detail profile for demand prioritization
+            description: Perfil de detalle para priorización de demanda
           - name: fsh_excl_return
-            description: Exclude returns indicator
+            description: Indicador de exclusión de devoluciones
           - name: fsh_po_idoc
-            description: Fashion PO outbound IDoc active
+            description: IDoc de salida de orden de compra fashion activo
           - name: fsh_var_kalsm
-            description: Pricing procedure for variants
+            description: Esquema de fijación de precios para variantes
           - name: fsh_vas_act
-            description: Value-added services active
+            description: Servicios de valor agregado activos
           - name: fsh_vas_del
-            description: VAS delivery mode
+            description: Modo de entrega VAS
           - name: fsh_vas_detdt
-            description: VAS determination date
+            description: Fecha de determinación VAS
           - name: fsh_vas_kalsm
-            description: VAS pricing procedure
+            description: Esquema de fijación de precios VAS
           - name: gsfrg
-            description: Release group
+            description: Grupo de liberación
           - name: hityp
-            description: History type
+            description: Tipo de historial
           - name: hvr_change_time
-            description: HVR change timestamp
+            description: Marca de tiempo de cambio HVR
           - name: hvr_is_deleted
-            description: HVR deletion flag
+            description: Marca de eliminación HVR
           - name: koako
-            description: Account assignment mandatory
+            description: Asignación de cuenta obligatoria
           - name: koett
-            description: Item category mandatory
+            description: Categoría de ítem obligatoria
           - name: kornr
-            description: Reference document number
+            description: Número de documento de referencia
           - name: kzale
-            description: Collective agreement allowed
+            description: Convenio colectivo permitido
           - name: lphis
-            description: Change history required
+            description: Historial de cambios requerido
           - name: mandt
-            description: Client
+            description: Mandante
           - name: mill_omkz
-            description: Industry solution flag (Mill)
+            description: Marca de solución de industria (Mill)
           - name: msr_active
-            description: MSR active flag
+            description: Marca de MSR activo
           - name: numka
-            description: Number range for internal assignment
+            description: Rango de números para asignación interna
           - name: numkc
-            description: Number range for contract
+            description: Rango de números para contrato
           - name: numke
-            description: Number range for external assignment
+            description: Rango de números para asignación externa
           - name: numki
-            description: Number range for inquiries
+            description: Rango de números para consultas
           - name: oicsegi
-            description: OIL segment indicator
+            description: Indicador de segmento OIL
           - name: oirfqreq
-            description: RFQ required indicator
+            description: Indicador de RFQ requerida
           - name: pargr
-            description: Partner role group
+            description: Grupo de rol de socio
           - name: pincr
-            description: Price increase indicator
+            description: Indicador de incremento de precio
           - name: rdp_profile
-            description: RDP profile
+            description: Perfil RDP
           - name: refba
-            description: Reference purchase doc type
+            description: Tipo de documento de compra de referencia
           - name: shenq
-            description: Incompletion check indicator
+            description: Indicador de verificación de completitud
           - name: stafo
-            description: Follow-on doc status
+            description: Estado del documento sucesor
           - name: stako
-            description: Header status
+            description: Estado de cabecera
           - name: tolsl
-            description: Tolerance key for limit
+            description: Clave de tolerancia para límite
           - name: umlif
-            description: Goods recipient required
+            description: Destinatario de mercancía requerido
           - name: upinc
-            description: Update indicator
+            description: Indicador de actualización
           - name: variante
-            description: Variant control
+            description: Control de variantes
           - name: wrf_enable_dateline
-            description: Enable dateline function
+            description: Habilitar función de fecha límite
           - name: wvvkz
-            description: Shipping instruction
+            description: Instrucción de embarque
           - name: xlokz
-            description: Delivery block indicator
+            description: Indicador de bloqueo de entrega
+
+
 
       - name: t161t
         identifier: "{{ var('sap_t161t_identifier', 't161t') }}"
         config:
           enabled: "{{ var('sap_using_t161t', true) }}"
-        description: Purchasing doc type texts
+        description: Textos de tipos de documento de compras
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: batxt
-            description: Description
+            description: Descripción
           - name: bsart
-            description: Document type
+            description: Tipo de documento
           - name: bstyp
-            description: Document category
+            description: Categoría de documento
           - name: mandt
-            description: Client
+            description: Mandante
           - name: spras
-            description: Language key
+            description: Clave de idioma
+
 
       - name: t503
         identifier: "{{ var('sap_t503_identifier', 't503') }}"
@@ -6881,53 +6889,55 @@ sources:
         identifier: "{{var('prefix_table_name') ~ 'tvag'}}"
         config:
           enabled: "{{ var('sap_using_tvag', true) }}"
-        description: Sales document rejection reasons
+        description: Motivos de rechazo de documentos de venta
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: abgru
-            description: Reason code
+            description: Código de motivo
           - name: dragr
-            description: Item is relevant for delivery scheduling
+            description: El ítem es relevante para la planificación de entregas
           - name: ep_off
-            description: EDI partner-specific flag
+            description: Marca específica de socio EDI
           - name: fk_erl
-            description: Billing block active
+            description: Bloqueo de facturación activo
           - name: fsh_pqr_spec
-            description: PQR specification (Fashion)
+            description: Especificación PQR (Fashion)
           - name: hvr_change_time
-            description: HVR change timestamp
+            description: Marca de tiempo de cambio HVR
           - name: hvr_is_deleted
-            description: HVR deletion flag
+            description: Marca de eliminación HVR
           - name: kowrr
-            description: Net value relevant
+            description: Relevante para el valor neto
           - name: mandt
-            description: Client
+            description: Mandante
 
       - name: tvagt
         identifier: "{{var('prefix_table_name') ~ 'tvagt'}}"
         config:
           enabled: "{{ var('sap_using_tvagt', true) }}"
-        description: Rejection reason texts
+        description: Textos de motivos de rechazo
         columns:
           - name: _fivetran_deleted
-            description: Fivetran deletion marker
+            description: Marca de eliminación de Fivetran
           - name: _fivetran_rowid
-            description: Fivetran unique row ID
+            description: ID único de fila de Fivetran
           - name: _fivetran_synced
-            description: Fivetran sync timestamp
+            description: Marca de tiempo de sincronización de Fivetran
           - name: abgru
-            description: Reason code
+            description: Código de motivo
           - name: bezei
-            description: Description
+            description: Descripción
           - name: mandt
-            description: Client
+            description: Mandante
           - name: spras
-            description: Language key
+            description: Clave de idioma
+
+
 
       - name: vbak
         identifier: "{{var('prefix_table_name') ~ 'vbak'}}"
@@ -9035,3 +9045,239 @@ sources:
             description: Quantity unit 2
           - name: qunit3
             description: Quantity unit 3
+
+      - name: likp
+        identifier: "{{ var('sap_likp_identifier', 'likp') }}"
+        config:
+          enabled: "{{ var('sap_using_likp', true) }}"
+        description: Delivery header. Added to support the deliveries extension of the sales_and_procurement star schema -- only the columns consumed by staging are documented here (the real table has ~187 columns).
+        columns:
+          - name: mandt
+            description: Client
+          - name: vbeln
+            description: Delivery number
+          - name: lfart
+            description: Delivery type
+          - name: kunnr
+            description: Ship-to party
+          - name: werks
+            description: Plant
+          - name: vstel
+            description: Shipping point
+          - name: route
+            description: Route
+          - name: vkorg
+            description: Sales organization
+          - name: vtweg
+            description: Distribution channel
+          - name: lfdat
+            description: Delivery date
+          - name: wadat
+            description: Planned goods issue date
+          - name: wadat_ist
+            description: Actual goods issue date
+          - name: erdat
+            description: Created on date
+          - name: netwr
+            description: Net value
+          - name: waerk
+            description: Currency
+          - name: btgew
+            description: Total weight
+          - name: ntgew
+            description: Net weight
+          - name: gewei
+            description: Weight unit
+          - name: volum
+            description: Volume
+          - name: voleh
+            description: Volume unit
+          - name: vbtyp
+            description: SD document category
+          - name: _fivetran_deleted
+            description: Fivetran deletion marker
+          - name: _fivetran_synced
+            description: Fivetran sync timestamp
+
+      - name: lips
+        identifier: "{{ var('sap_lips_identifier', 'lips') }}"
+        config:
+          enabled: "{{ var('sap_using_lips', true) }}"
+        description: Delivery item. Added to support the deliveries extension of the sales_and_procurement star schema -- only the columns consumed by staging are documented here (the real table has ~308 columns).
+        columns:
+          - name: mandt
+            description: Client
+          - name: vbeln
+            description: Delivery number
+          - name: posnr
+            description: Delivery item number
+          - name: matnr
+            description: Material number
+          - name: werks
+            description: Plant
+          - name: lgort
+            description: Storage location
+          - name: charg
+            description: Batch number
+          - name: vgbel
+            description: Reference document (preceding document)
+          - name: vgpos
+            description: Reference document item
+          - name: aufnr
+            description: Order number
+          - name: lfimg
+            description: Delivery quantity
+          - name: meins
+            description: Base unit of measure
+          - name: netwr
+            description: Net value
+          - name: brgew
+            description: Gross weight
+          - name: ntgew
+            description: Net weight
+          - name: gewei
+            description: Weight unit
+          - name: volum
+            description: Volume
+          - name: voleh
+            description: Volume unit
+          - name: erdat
+            description: Created on date
+          - name: _fivetran_deleted
+            description: Fivetran deletion marker
+          - name: _fivetran_synced
+            description: Fivetran sync timestamp
+
+      - name: vbrk
+        identifier: "{{ var('sap_vbrk_identifier', 'vbrk') }}"
+        config:
+          enabled: "{{ var('sap_using_vbrk', true) }}"
+        description: Billing document header. Added to support the billing extension of the sales_and_procurement star schema -- only the columns consumed by staging are documented here (the real table has ~116 columns).
+        columns:
+          - name: mandt
+            description: Client
+          - name: vbeln
+            description: Billing document number
+          - name: fkart
+            description: Billing type
+          - name: vbtyp
+            description: SD document category (e.g. M = invoice, O = credit memo, P = invoice cancellation, N = credit memo cancellation)
+          - name: kunag
+            description: Sold-to party
+          - name: kunrg
+            description: Payer
+          - name: vkorg
+            description: Sales organization
+          - name: vtweg
+            description: Distribution channel
+          - name: spart
+            description: Division
+          - name: fkdat
+            description: Billing date
+          - name: erdat
+            description: Created on date
+          - name: netwr
+            description: Net value
+          - name: waerk
+            description: Currency
+          - name: zterm
+            description: Payment terms
+          - name: fksto
+            description: Cancellation indicator
+          - name: _fivetran_deleted
+            description: Fivetran deletion marker
+          - name: _fivetran_synced
+            description: Fivetran sync timestamp
+
+      - name: vbrp
+        identifier: "{{ var('sap_vbrp_identifier', 'vbrp') }}"
+        config:
+          enabled: "{{ var('sap_using_vbrp', true) }}"
+        description: Billing document item. Added to support the billing extension of the sales_and_procurement star schema -- only the columns consumed by staging are documented here (the real table has ~230 columns).
+        columns:
+          - name: mandt
+            description: Client
+          - name: vbeln
+            description: Billing document number
+          - name: posnr
+            description: Billing document item number
+          - name: matnr
+            description: Material number
+          - name: werks
+            description: Plant
+          - name: charg
+            description: Batch number
+          - name: aubel
+            description: Sales document (order) number
+          - name: aupos
+            description: Sales document item number
+          - name: vgbel
+            description: Reference document (preceding document, e.g. delivery)
+          - name: vgpos
+            description: Reference document item
+          - name: fkimg
+            description: Billed quantity
+          - name: vrkme
+            description: Sales unit of measure
+          - name: netwr
+            description: Net value
+          - name: mwsbp
+            description: Tax amount
+          - name: shkzg
+            description: Debit/credit indicator
+          - name: prctr
+            description: Profit center
+          - name: kostl
+            description: Cost center
+          - name: erdat
+            description: Created on date
+          - name: _fivetran_deleted
+            description: Fivetran deletion marker
+          - name: _fivetran_synced
+            description: Fivetran sync timestamp
+
+      - name: knvv
+        identifier: "{{ var('sap_knvv_identifier', 'knvv') }}"
+        config:
+          enabled: "{{ var('sap_using_knvv', true) }}"
+        description: Customer master sales area data. Added to support the deliveries/billing extension of the sales_and_procurement star schema -- only the columns consumed by staging are documented here (the real table has ~107 columns).
+        columns:
+          - name: mandt
+            description: Client
+          - name: kunnr
+            description: Customer number
+          - name: vkorg
+            description: Sales organization
+          - name: vtweg
+            description: Distribution channel
+          - name: spart
+            description: Division
+          - name: kdgrp
+            description: Customer group
+          - name: bzirk
+            description: Sales district
+          - name: vkbur
+            description: Sales office
+          - name: vkgrp
+            description: Sales group
+          - name: waers
+            description: Currency
+          - name: zterm
+            description: Payment terms
+          - name: antlf
+            description: Maximum number of partial deliveries
+          - name: autlf
+            description: Complete delivery indicator
+          - name: lifsd
+            description: Delivery block
+          - name: faksd
+            description: Billing block
+          - name: loevm
+            description: Deletion flag
+          - name: erdat
+            description: Created on date
+          - name: _fivetran_deleted
+            description: Fivetran deletion marker
+          - name: _fivetran_synced
+            description: Fivetran sync timestamp
+
