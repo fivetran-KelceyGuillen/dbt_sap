@@ -1,0 +1,135 @@
+title: "Dashboard Ejecutivo: Ciclo Sales-to-Cash y Compras"
+source: analytics
+
+# IMPORTANTE: reemplazá `internal-sales.dbt_kguillen_kel_dbt` por la base/esquema
+# donde vos corriste `dbt build` (corré `dbt list --output json` y mirá
+# `relation_name` de cualquier modelo para confirmar la ubicación exacta).
+# Estas queries apuntan al esquema de desarrollo usado durante esta sesión;
+# para publicar con datos de producción, apuntá al esquema de producción.
+# Los backticks alrededor de `internal-sales...` son obligatorios en BigQuery
+# porque el project ID tiene un guion (si no, se interpreta como una resta).
+
+queries:
+  tendencia_mensual:
+    sql: |
+      SELECT
+        date_trunc(document_date, month) AS mes,
+        'Ventas' AS proceso,
+        round(sum(net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_sales_order`
+      WHERE document_date BETWEEN '2015-01-01' AND '2018-12-31'
+      GROUP BY 1
+      UNION ALL
+      SELECT
+        date_trunc(billing_date, month),
+        'Facturación',
+        round(sum(net_value), 2)
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_billing`
+      WHERE billing_date BETWEEN '2015-01-01' AND '2018-12-31'
+      GROUP BY 1
+      ORDER BY 1
+
+  top_clientes:
+    sql: |
+      SELECT
+        c.customer_name AS cliente,
+        round(sum(f.net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_sales_order` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_customer` c
+        ON f.client_id = c.client_id AND f.sold_to_customer_id = c.customer_id
+      WHERE c.customer_name IS NOT NULL AND c.customer_name != ''
+      GROUP BY 1
+      ORDER BY valor_neto DESC
+      LIMIT 10
+
+  top_materiales:
+    sql: |
+      SELECT
+        m.material_description AS material,
+        round(sum(f.net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_sales_order` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_material` m
+        ON f.client_id = m.client_id AND f.material_id = m.material_id
+      WHERE m.material_description IS NOT NULL AND m.material_description != ''
+      GROUP BY 1
+      ORDER BY valor_neto DESC
+      LIMIT 10
+
+  top_proveedores:
+    sql: |
+      SELECT
+        v.name AS proveedor,
+        round(sum(f.purchase_order_amount), 2) AS monto_comprado
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_purchasing_order` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_vendor` v
+        ON f.client_id = v.client_id AND f.vendor_id = v.vendor_id
+      GROUP BY 1
+      ORDER BY monto_comprado DESC
+      LIMIT 10
+
+  kpis_resumen:
+    sql: |
+      WITH totales AS (
+        SELECT
+          (SELECT round(sum(net_value),2) FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_sales_order`) AS ventas,
+          (SELECT round(sum(net_value),2) FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_billing`) AS facturado,
+          (SELECT round(sum(purchase_order_amount),2) FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_purchasing_order`) AS compras
+      )
+      SELECT
+        ventas,
+        facturado,
+        compras,
+        round(facturado / nullif(ventas,0) * 100, 2) AS pct_facturado,
+        round(compras / nullif(ventas,0) * 100, 2) AS pct_compras_vs_ventas
+      FROM totales
+
+charts:
+  tendencia_mensual_chart:
+    type: line
+    query: tendencia_mensual
+    x: mes
+    y: valor_neto
+    color: proceso
+    title: "Tendencia mensual: Ventas vs. Facturación"
+
+  top_clientes_chart:
+    type: bar
+    query: top_clientes
+    x: cliente
+    y: valor_neto
+    title: "Top 10 clientes por valor neto de ventas"
+
+  top_materiales_chart:
+    type: bar
+    query: top_materiales
+    x: material
+    y: valor_neto
+    title: "Top 10 materiales por valor neto de ventas"
+
+  top_proveedores_chart:
+    type: bar
+    query: top_proveedores
+    x: proveedor
+    y: monto_comprado
+    title: "Top 10 proveedores por monto comprado"
+
+  kpis_resumen_table:
+    type: table
+    query: kpis_resumen
+    title: "KPIs generales del ciclo comercial"
+
+rows:
+  - title: "Resumen"
+    rows:
+      - kpis_resumen_table
+  - title: "Tendencia"
+    cols:
+      - tendencia_mensual_chart
+  - title: "Ventas: clientes y materiales"
+    cols:
+      - top_clientes_chart
+      - top_materiales_chart
+  - title: "Compras"
+    cols:
+      - top_proveedores_chart
+

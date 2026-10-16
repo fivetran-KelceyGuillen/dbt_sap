@@ -1,0 +1,9 @@
+sources:
+  analytics:
+    type: dbt_profile
+    # Ajustá profile/target para que coincidan con tu profiles.yml local.
+    # dbt Charts corre localmente con `dct` y usa tu conexión de profiles.yml,
+    # no las credenciales de dbt Platform -- necesitás un profile BigQuery
+    # configurado en tu máquina para que esto funcione.
+    profile: sap
+    target: dev
