@@ -666,6 +666,7 @@ sources:
 
       - name: bkpf
         identifier: "{{ var('sap_bkpf_identifier', 'bkpf') }}"
+        adapter: lakecompute
         config:
           enabled: "{{ var('sap_using_bkpf', true) }}"
         description: Accounting document header
