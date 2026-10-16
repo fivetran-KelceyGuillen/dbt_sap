@@ -596,6 +596,77 @@ models:
         label: Purchase Late Delivery Rate
         numerator: purchase_late_item_count
         denominator: purchase_order_line_count
+      - name: purchase_cancellation_rate
+        description: Share of ordered value that was subsequently cancelled
+        type: ratio
+        label: Purchase Cancellation Rate
+        numerator: purchase_cancelled_amount_total
+        denominator: purchase_order_amount_total
+      - name: purchase_order_amount_cumulative
+        description: Running total of purchase order amount across all time
+        type: cumulative
+        label: Cumulative Purchase Order Amount (All-Time)
+        input_metric: purchase_order_amount_total
+      - name: purchase_order_amount_mtd
+        description: Month-to-date purchase order amount
+        type: cumulative
+        label: Purchase Order Amount (MTD)
+        grain_to_date: month
+        input_metric: purchase_order_amount_total
+      - name: purchase_order_amount_l30d
+        description: Trailing 30-day purchase order amount
+        type: cumulative
+        label: Purchase Order Amount (L30D)
+        window: 30 days
+        input_metric: purchase_order_amount_total
+      - name: purchase_order_amount_growth_mom
+        description: Percentage growth in purchase order amount compared to the prior month
+        type: derived
+        label: Purchase Order Amount Growth % M/M
+        expr: (current_month - prior_month) * 100 / nullif(prior_month, 0)
+        input_metrics:
+          - name: purchase_order_amount_total
+            alias: current_month
+          - name: purchase_order_amount_total
+            alias: prior_month
+            offset_window: 1 month
+      - name: purchase_order_amount_growth_yoy
+        description: Percentage growth in purchase order amount compared to the same period one year ago
+        type: derived
+        label: Purchase Order Amount Growth % Y/Y
+        expr: (current_year - prior_year) * 100 / nullif(prior_year, 0)
+        input_metrics:
+          - name: purchase_order_amount_total
+            alias: current_year
+          - name: purchase_order_amount_total
+            alias: prior_year
+            offset_window: 1 year
+      - name: purchase_order_average_value
+        description: Average purchase order amount per order line
+        type: ratio
+        label: Average Purchase Order Value
+        numerator: purchase_order_amount_total
+        denominator: purchase_order_line_count
+      - name: purchase_fulfillment_rate
+        description: Share of ordered value that has actually been delivered
+        type: ratio
+        label: Purchase Fulfillment Rate
+        numerator: purchase_delivered_amount_total
+        denominator: purchase_order_amount_total
+      - name: purchase_net_order_value
+        description: Purchase order amount net of cancellations
+        type: derived
+        label: Net Purchase Order Value
+        expr: ordered - cancelled
+        input_metrics:
+          - name: purchase_order_amount_total
+            alias: ordered
+          - name: purchase_cancelled_amount_total
+            alias: cancelled
+
+
+
+
 
   - name: sap__fact_sales_order
     description: Line-level sales order facts and metrics
@@ -789,3 +860,89 @@ models:
         label: Sales Order Line Count
         agg: count
         expr: "1"
+      - name: sales_net_value_per_unit
+        description: Net sales value per unit sold (quantity-weighted average price, as opposed to the unweighted sales_net_price_average)
+        type: ratio
+        label: Net Sales Value per Unit
+        numerator: sales_net_value_total
+        denominator: sales_order_quantity_total
+      - name: sales_net_value_cumulative
+        description: Running total of sales net value across all time
+        type: cumulative
+        label: Cumulative Sales Net Value (All-Time)
+        input_metric: sales_net_value_total
+      - name: sales_net_value_mtd
+        description: Month-to-date sales net value
+        type: cumulative
+        label: Sales Net Value (MTD)
+        grain_to_date: month
+        input_metric: sales_net_value_total
+      - name: sales_net_value_l7d
+        description: Trailing 7-day sales net value
+        type: cumulative
+        label: Sales Net Value (L7D)
+        window: 7 days
+        input_metric: sales_net_value_total
+      - name: sales_net_value_growth_mom
+        description: Percentage growth in sales net value compared to the prior month
+        type: derived
+        label: Sales Net Value Growth % M/M
+        expr: (current_month - prior_month) * 100 / nullif(prior_month, 0)
+        input_metrics:
+          - name: sales_net_value_total
+            alias: current_month
+          - name: sales_net_value_total
+            alias: prior_month
+            offset_window: 1 month
+      - name: sales_net_value_growth_yoy
+        description: Percentage growth in sales net value compared to the same period one year ago
+        type: derived
+        label: Sales Net Value Growth % Y/Y
+        expr: (current_year - prior_year) * 100 / nullif(prior_year, 0)
+        input_metrics:
+          - name: sales_net_value_total
+            alias: current_year
+          - name: sales_net_value_total
+            alias: prior_year
+            offset_window: 1 year
+      - name: sales_average_order_value
+        description: Average net sales value per order line
+        type: ratio
+        label: Average Sales Order Value
+        numerator: sales_net_value_total
+        denominator: sales_order_line_count
+      - name: sales_returns_value_total
+        description: Net sales value for lines flagged as returns
+        type: simple
+        label: Sales Returns Value
+        agg: sum
+        expr: net_value
+        filter: |
+          {{ Dimension('sales_order_line__returns_item') }} != ''
+      - name: sales_return_rate
+        description: Returns value as a share of total sales net value
+        type: ratio
+        label: Sales Return Rate
+        numerator: sales_returns_value_total
+        denominator: sales_net_value_total
+
+
+
+metrics:
+  - name: purchase_to_sales_value_ratio
+    description: Purchase order value as a ratio of sales net value -- a cross-model view of spend relative to revenue
+    type: ratio
+    label: Purchase-to-Sales Value Ratio
+    numerator: purchase_order_amount_total
+    denominator: sales_net_value_total
+  - name: gross_margin_proxy_amount
+    description: Rough absolute spread between sales net value and purchase order amount -- a cross-model proxy for margin, not a GAAP figure
+    type: derived
+    label: Gross Margin Proxy Amount
+    expr: revenue - spend
+    input_metrics:
+      - name: sales_net_value_total
+        alias: revenue
+      - name: purchase_order_amount_total
+        alias: spend
+

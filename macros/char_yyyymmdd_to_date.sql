@@ -10,8 +10,12 @@
     cast(cast({{ date_string }} as {{ dbt.type_string() }}) as date )
 {% endmacro %}
 {% macro bigquery__char_yyyymmdd_to_date(date_string) %}
-    safe.parse_date('%Y%m%d', cast({{ date_string }} as string))
+    coalesce(
+        safe.parse_date('%Y%m%d', safe_cast({{ date_string }} as string)),
+        safe_cast({{ date_string }} as date)
+    )
 {% endmacro %}
+
 
 {% macro snowflake__char_yyyymmdd_to_date(date_string) %}
     try_to_date(cast({{ date_string }} as varchar), 'YYYYMMDD')
