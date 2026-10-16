@@ -1,0 +1,109 @@
+version: 2
+
+models:
+  - name: stg_sap__likp
+    description: Cabecera de entrega (despacho). Agregado para la extensión de entregas del star schema sales_and_procurement.
+    columns:
+      - name: mandt
+        description: Mandante SAP (mandt)
+        data_tests:
+          - not_null
+      - name: vbeln
+        description: Número de entrega
+        data_tests:
+          - not_null
+      - name: lfart
+        description: Tipo de entrega
+      - name: kunnr
+        description: Parte de destino de la mercadería (ship-to party)
+      - name: werks
+        description: Planta
+      - name: vstel
+        description: Punto de expedición
+      - name: route
+        description: Ruta
+      - name: vkorg
+        description: Organización de ventas
+      - name: vtweg
+        description: Canal de distribución
+      - name: lfdat
+        description: Fecha de entrega
+      - name: wadat
+        description: Fecha planificada de salida de mercancía
+      - name: wadat_ist
+        description: Fecha real de salida de mercancía
+      - name: erdat
+        description: Fecha de creación
+      - name: netwr
+        description: Valor neto
+      - name: waerk
+        description: Moneda
+      - name: btgew
+        description: Peso total
+      - name: ntgew
+        description: Peso neto
+      - name: gewei
+        description: Unidad de peso
+      - name: volum
+        description: Volumen
+      - name: voleh
+        description: Unidad de volumen
+      - name: vbtyp
+        description: Categoría del documento SD
+      - name: _fivetran_deleted
+        description: Marca de eliminación de Fivetran
+      - name: _fivetran_synced
+        description: Marca de tiempo de sincronización de Fivetran
+
+  - name: stg_sap__lips
+    description: Ítem de entrega (despacho). Agregado para la extensión de entregas del star schema sales_and_procurement.
+    columns:
+      - name: mandt
+        description: Mandante SAP (mandt)
+        data_tests:
+          - not_null
+      - name: vbeln
+        description: Número de entrega
+        data_tests:
+          - not_null
+      - name: posnr
+        description: Número de ítem de entrega
+        data_tests:
+          - not_null
+      - name: matnr
+        description: Número de material
+      - name: werks
+        description: Planta
+      - name: lgort
+        description: Ubicación de almacenamiento
+      - name: charg
+        description: Número de lote
+      - name: vgbel
+        description: Documento de referencia (documento precedente, ej. orden de venta)
+      - name: vgpos
+        description: Ítem del documento de referencia
+      - name: aufnr
+        description: Número de orden
+      - name: lfimg
+        description: Cantidad entregada
+      - name: meins
+        description: Unidad de medida base
+      - name: netwr
+        description: Valor neto
+      - name: brgew
+        description: Peso bruto
+      - name: ntgew
+        description: Peso neto
+      - name: gewei
+        description: Unidad de peso
+      - name: volum
+        description: Volumen
+      - name: voleh
+        description: Unidad de volumen
+      - name: erdat
+        description: Fecha de creación
+      - name: _fivetran_deleted
+        description: Marca de eliminación de Fivetran
+      - name: _fivetran_synced
+        description: Marca de tiempo de sincronización de Fivetran
+

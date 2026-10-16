@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: sap__dim_customer
-    description: Customer dimension table
+    description: Tabla de dimensión de clientes
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -21,34 +21,137 @@ models:
 
     columns:
       - name: client_id
-        description: SAP client (mandt) the customer record belongs to
+        description: Mandante SAP (mandt) al que pertenece el registro del cliente
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: customer_number
-        description: Unique identifier of the customer in SAP
+        description: Identificador único del cliente en SAP
         dimension:
           type: categorical
       - name: country_key_id
-        description: Country key associated with the customer
+        description: Clave de país asociada al cliente
         dimension:
           type: categorical
       - name: customer_name
-        description: Full name of the customer
+        description: Nombre completo del cliente
         dimension:
           type: categorical
       - name: city
-        description: Customer’s city of residence
+        description: Ciudad de residencia del cliente
         dimension:
           type: categorical
       - name: customer_id
-        description: Surrogate key for the customer
+        description: Clave subrogada del cliente
         data_tests:
           - not_null
 
+  - name: sap__dim_customer_sales_area
+    description: Atributos de área de ventas del cliente (grano cliente / organización de ventas / canal de distribución / división), construido a partir de KNVV. Un cliente puede tener varias filas de área de ventas.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - customer_id
+              - sales_organization_id
+              - distribution_channel_id
+              - division_id
+    semantic_model:
+      enabled: true
+      name: dim_customer_sales_area
+
+    derived_semantics:
+      entities:
+        - name: customer_sales_area
+          type: primary
+          expr: "concat(client_id, '-', customer_id, '-', sales_organization_id, '-', distribution_channel_id, '-', division_id)"
+          label: Área de Ventas del Cliente
+        - name: customer
+          type: foreign
+          expr: "concat(client_id, '-', customer_id)"
+          label: Cliente
+
+    columns:
+      - name: client_id
+        description: Mandante SAP (mandt) al que pertenece el registro de área de ventas
+        data_tests:
+          - not_null
+        dimension:
+          type: categorical
+      - name: customer_id
+        description: Cliente al que pertenece este registro de área de ventas
+        data_tests:
+          - not_null
+      - name: customer_number
+        description: Identificador único del cliente en SAP
+        dimension:
+          type: categorical
+      - name: sales_organization_id
+        description: Organización de ventas
+        data_tests:
+          - not_null
+        dimension:
+          type: categorical
+      - name: distribution_channel_id
+        description: Canal de distribución
+        data_tests:
+          - not_null
+        dimension:
+          type: categorical
+      - name: division_id
+        description: División
+        data_tests:
+          - not_null
+        dimension:
+          type: categorical
+      - name: customer_group_id
+        description: Grupo de cliente
+        dimension:
+          type: categorical
+      - name: sales_district_id
+        description: Zona de ventas
+        dimension:
+          type: categorical
+      - name: sales_office_id
+        description: Oficina de ventas
+        dimension:
+          type: categorical
+      - name: sales_group_id
+        description: Grupo de ventas
+        dimension:
+          type: categorical
+      - name: currency_id
+        description: Moneda utilizada en esta área de ventas del cliente
+        dimension:
+          type: categorical
+      - name: payment_terms_id
+        description: Condiciones de pago para esta área de ventas del cliente
+        dimension:
+          type: categorical
+      - name: max_partial_deliveries
+        description: Cantidad máxima de entregas parciales permitidas
+      - name: complete_delivery
+        description: Indicador de entrega completa
+        dimension:
+          type: categorical
+      - name: delivery_block_id
+        description: Motivo de bloqueo de entrega para esta área de ventas del cliente
+        dimension:
+          type: categorical
+      - name: billing_block_id
+        description: Motivo de bloqueo de facturación para esta área de ventas del cliente
+        dimension:
+          type: categorical
+      - name: deletion_flag
+        description: Marca de eliminación para este registro de área de ventas del cliente
+        dimension:
+          type: categorical
+
+
   - name: sap__dim_material
-    description: Material master dimension table
+    description: Tabla de dimensión de materiales
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -67,44 +170,44 @@ models:
           label: Material
     columns:
       - name: client_id
-        description: SAP client (mandt) the material record belongs to
+        description: Mandante SAP (mandt) al que pertenece el registro del material
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: material_number
-        description: Unique identifier for the material
+        description: Identificador único del material
         dimension:
           type: categorical
       - name: material_description
-        description: Text description of the material
+        description: Descripción textual del material
         dimension:
           type: categorical
       - name: material_type_id
-        description: Identifier for material type (e.g., finished goods)
+        description: Identificador del tipo de material (ej. producto terminado)
         dimension:
           type: categorical
       - name: material_type_description
-        description: Description of the material type
+        description: Descripción del tipo de material
         dimension:
           type: categorical
       - name: base_uom_id
-        description: Base unit of measure for the material
+        description: Unidad de medida base del material
         dimension:
           type: categorical
       - name: gross_weight
-        description: Gross weight of the material
+        description: Peso bruto del material
       - name: weight_uom_id
-        description: Unit of measure for weight
+        description: Unidad de medida del peso
         dimension:
           type: categorical
       - name: material_id
-        description: Surrogate key for the material
+        description: Clave subrogada del material
         data_tests:
           - not_null
 
   - name: sap__dim_plant
-    description: Plant/branch dimension table
+    description: Tabla de dimensión de plantas/sucursales
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -124,26 +227,26 @@ models:
 
     columns:
       - name: client_id
-        description: SAP client (mandt) the plant record belongs to
+        description: Mandante SAP (mandt) al que pertenece el registro de la planta
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: plant_id
-        description: Unique identifier for the plant
+        description: Identificador único de la planta
         data_tests:
           - not_null
       - name: plant_name
-        description: Name of the plant
+        description: Nombre de la planta
         dimension:
           type: categorical
       - name: country_key_id
-        description: Country key
+        description: Clave de país
         dimension:
           type: categorical
 
   - name: sap__dim_purchasing_order
-    description: Purchasing document header attributes
+    description: Atributos de cabecera del documento de compras
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -167,60 +270,60 @@ models:
 
     columns:
       - name: client_id
-        description: SAP client (mandt) the purchasing document belongs to
+        description: Mandante SAP (mandt) al que pertenece el documento de compras
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: purchasing_document_id
-        description: Unique ID of the purchasing document
+        description: ID único del documento de compras
         data_tests:
           - not_null
       - name: purchasing_document_category
-        description: Category code of the purchasing document
+        description: Código de categoría del documento de compras
         dimension:
           type: categorical
       - name: purchasing_document_category_txt
-        description: Description of the document category
+        description: Descripción de la categoría del documento
         dimension:
           type: categorical
       - name: purchasing_document_type_id
-        description: Document type code (e.g. NB, FO)
+        description: Código de tipo de documento (ej. NB, FO)
         dimension:
           type: categorical
       - name: purchasing_document_type_text
-        description: Description of the purchasing document type
+        description: Descripción del tipo de documento de compras
         dimension:
           type: categorical
       - name: purchasing_group_id
-        description: ID of the purchasing group
+        description: ID del grupo de compras
         dimension:
           type: categorical
       - name: description_purchasing_group
-        description: Description of the purchasing group
+        description: Descripción del grupo de compras
         dimension:
           type: categorical
       - name: purchasing_document_status
-        description: Status code of the purchasing document
+        description: Código de estado del documento de compras
         dimension:
           type: categorical
       - name: purchasing_document_status_txt
-        description: Description of document status
+        description: Descripción del estado del documento
         dimension:
           type: categorical
       - name: payment_terms
-        description: Terms of payment key
+        description: Clave de condiciones de pago
         dimension:
           type: categorical
       - name: reason_cancellation_id
-        description: Reason code for cancellation
+        description: Código del motivo de cancelación
         dimension:
           type: categorical
       - name: company_code_id
-        description: Company code associated with the document
+        description: Sociedad asociada al documento
 
   - name: sap__dim_purchasing_organization
-    description: Purchasing organization dimension
+    description: Dimensión de organización de compras
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -245,26 +348,26 @@ models:
 
     columns:
       - name: client_id
-        description: SAP client (mandt) the purchasing organization belongs to
+        description: Mandante SAP (mandt) al que pertenece la organización de compras
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: company_code_id
-        description: Company code assigned to the organization
+        description: Sociedad asignada a la organización
         data_tests:
           - not_null
       - name: purchasing_organization_id
-        description: ID of the purchasing organization
+        description: ID de la organización de compras
         data_tests:
           - not_null
       - name: description
-        description: Description of the purchasing organization
+        description: Descripción de la organización de compras
         dimension:
           type: categorical
 
   - name: sap__dim_rejection_reason
-    description: Reasons for purchase/sales document rejections
+    description: Motivos de rechazo de documentos de compra/venta
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -284,22 +387,22 @@ models:
 
     columns:
       - name: client_id
-        description: SAP client (mandt) the rejection reason belongs to
+        description: Mandante SAP (mandt) al que pertenece el motivo de rechazo
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: reason_rejection_id
-        description: Code for rejection reason
+        description: Código del motivo de rechazo
         data_tests:
           - not_null
       - name: rejection_reason_description
-        description: Description of the rejection reason
+        description: Descripción del motivo de rechazo
         dimension:
           type: categorical
 
   - name: sap__dim_vendor
-    description: Vendor dimension table.
+    description: Tabla de dimensión de proveedores.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -319,54 +422,54 @@ models:
 
     columns:
       - name: client_id
-        description: SAP client (mandt) the vendor record belongs to
+        description: Mandante SAP (mandt) al que pertenece el registro del proveedor
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: vendor_id
-        description: ID of the vendor
+        description: ID del proveedor
         data_tests:
           - not_null
       - name: country_key_id
-        description: Country key of the vendor
+        description: Clave de país del proveedor
         dimension:
           type: categorical
       - name: name
-        description: Vendor name (line 1)
+        description: Nombre del proveedor (línea 1)
         dimension:
           type: categorical
       - name: name_2
-        description: Vendor name (line 2)
+        description: Nombre del proveedor (línea 2)
         dimension:
           type: categorical
       - name: city
-        description: Vendor city
+        description: Ciudad del proveedor
         dimension:
           type: categorical
       - name: sort_field
-        description: Sort field for vendor
+        description: Campo de ordenamiento del proveedor
         dimension:
           type: categorical
       - name: authorization_group_id
-        description: Authorization group ID
+        description: ID del grupo de autorización
         dimension:
           type: categorical
       - name: industry_key_id
-        description: Industry classification key
+        description: Clave de clasificación de industria
         dimension:
           type: categorical
       - name: group_key
-        description: Grouping key for vendors
+        description: Clave de agrupación de proveedores
         dimension:
           type: categorical
       - name: vendor_account_group_id
-        description: Account group ID for the vendor
+        description: ID del grupo de cuentas del proveedor
         dimension:
           type: categorical
 
   - name: sap__fact_purchasing_order
-    description: Line-level metrics for purchasing documents
+    description: Métricas a nivel de línea para documentos de compras
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -412,108 +515,108 @@ models:
 
     columns:
       - name: client_id
-        description: SAP client (mandt) the purchasing document belongs to
+        description: Mandante SAP (mandt) al que pertenece el documento de compras
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: purchasing_document_id
-        description: ID of the purchasing document
+        description: ID del documento de compras
         data_tests:
           - not_null
       - name: purchasing_document_item_id
-        description: Item number in the purchasing document
+        description: Número de ítem en el documento de compras
         data_tests:
           - not_null
       - name: company_code_id
-        description: Company code that created the order
+        description: Sociedad que creó la orden
       - name: currency_id
-        description: Currency used in the transaction
+        description: Moneda utilizada en la transacción
         dimension:
           type: categorical
       - name: material_id
-        description: Foreign key to the material master
+        description: Clave foránea al maestro de materiales
       - name: plant_id
-        description: Plant where the goods are delivered
+        description: Planta donde se entregan los bienes
       - name: purchasing_group_id
-        description: Responsible purchasing group
+        description: Grupo de compras responsable
         dimension:
           type: categorical
       - name: purchasing_organization_id
-        description: Responsible purchasing organization
+        description: Organización de compras responsable
       - name: vendor_id
-        description: Vendor supplying the goods
+        description: Proveedor que suministra los bienes
       - name: order_uom_id
-        description: Unit of measure for the order
+        description: Unidad de medida de la orden
         dimension:
           type: categorical
       - name: purchasing_document_date
-        description: Creation date of the purchasing document
+        description: Fecha de creación del documento de compras
         granularity: day
         dimension:
           type: time
       - name: scheduled_delivery_date
-        description: Planned date of delivery
+        description: Fecha planificada de entrega
         granularity: day
         dimension:
           type: time
       - name: purchase_deliver_late_days
-        description: Days the delivery was late
+        description: Días de atraso en la entrega
       - name: purchase_late_lead_days
-        description: Days past lead time
+        description: Días excedidos respecto del lead time
       - name: purchase_order_quantity
-        description: Quantity ordered
+        description: Cantidad pedida
       - name: purchase_open_quantity
-        description: Quantity yet to be delivered
+        description: Cantidad pendiente de entregar
       - name: purchasing_delivered_quantity
-        description: Quantity delivered
+        description: Cantidad entregada
       - name: purchase_late_quantity
-        description: Quantity delivered late
+        description: Cantidad entregada tarde
       - name: cancel_purchase_quantity
-        description: Quantity canceled
+        description: Cantidad cancelada
       - name: purchase_order_amount
-        description: Total order value
+        description: Valor total de la orden
       - name: purchasing_document_currency_amount
-        description: Order value in document currency
+        description: Valor de la orden en la moneda del documento
       - name: document_currency_id
-        description: Currency code for the order
+        description: Código de moneda de la orden
         dimension:
           type: categorical
       - name: purchase_open_amount
-        description: Value of undelivered quantity
+        description: Valor de la cantidad sin entregar
       - name: purchase_delivered_amount
-        description: Value of delivered quantity
+        description: Valor de la cantidad entregada
       - name: cancel_purchase_amount
-        description: Value of canceled quantity
+        description: Valor de la cantidad cancelada
       - name: purchase_late_amount
-        description: Value of late-delivered quantity
+        description: Valor de la cantidad entregada tarde
       - name: purchase_invoiced_amount
-        description: Invoiced amount
+        description: Monto facturado
       - name: purchase_order_item_count
-        description: Number of line items in the order
+        description: Cantidad de líneas de ítem en la orden
       - name: purchase_item_late_count
-        description: Number of items delivered late
+        description: Cantidad de ítems entregados tarde
       - name: purchase_item_open_count
-        description: Number of open (undelivered) items
+        description: Cantidad de ítems abiertos (sin entregar)
       - name: purchase_item_closed_count
-        description: Number of closed/completed items
+        description: Cantidad de ítems cerrados/completados
       - name: returns_item
-        description: Indicates if the item is a return ('' if not a return)
+        description: Indica si el ítem es una devolución ('' si no lo es)
         dimension:
           type: categorical
       - name: rejection_indicator
-        description: Flag indicating whether the item has been rejected
+        description: Indicador de si el ítem fue rechazado
         dimension:
           type: categorical
       - name: exchange_rate
-        description: Exchange rate between the document currency and local currency
+        description: Tipo de cambio entre la moneda del documento y la moneda local
       - name: latest_goods_receive_date
-        description: Most recent goods receipt date recorded
+        description: Fecha de la recepción de mercancía más reciente registrada
         granularity: day
         dimension:
           type: time
       - name: delivery_completed
-        description: Flag indicating whether delivery for the item is complete
+        description: Indicador de si la entrega del ítem está completa
         dimension:
           type: categorical
     metrics:
@@ -522,6 +625,7 @@ models:
         label: Cantidad Pedida en Compras
         agg: sum
         expr: purchase_order_quantity
+
       - name: purchase_order_amount_total
         type: simple
         label: Monto Pedido en Compras
@@ -674,7 +778,7 @@ models:
 
 
   - name: sap__fact_sales_order
-    description: Line-level sales order facts and metrics
+    description: Hechos y métricas a nivel de línea de orden de venta
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -708,21 +812,21 @@ models:
 
     columns:
       - name: client_id
-        description: SAP client (mandt) the sales document belongs to
+        description: Mandante SAP (mandt) al que pertenece el documento de venta
         data_tests:
           - not_null
         dimension:
           type: categorical
       - name: sales_document_number
-        description: Sales document number
+        description: Número del documento de venta
         data_tests:
           - not_null
       - name: sales_document_item
-        description: Sales document item number
+        description: Número de ítem del documento de venta
         data_tests:
           - not_null
       - name: sd_document_category
-        description: Sales document category (e.g. order, quote). SAP exposes this as an uppercase single-letter code (C = order, H = returns credit memo).
+        description: Categoría del documento de venta (ej. orden, cotización). SAP expone esto como un código de una letra en mayúscula (C = orden, H = nota de crédito por devolución).
         data_tests:
           - accepted_values:
               arguments:
@@ -731,117 +835,118 @@ models:
           type: categorical
 
       - name: sales_document_type_id
-        description: Type of sales document
+        description: Tipo de documento de venta
         dimension:
           type: categorical
       - name: order_reason_id
-        description: Reason code for sales order
+        description: Código del motivo de la orden de venta
         dimension:
           type: categorical
       - name: delivery_block_id
-        description: Delivery block reason code
+        description: Código del motivo de bloqueo de entrega
         dimension:
           type: categorical
       - name: sales_organization_id
-        description: Sales organization responsible for the sale
+        description: Organización de ventas responsable de la venta
         dimension:
           type: categorical
       - name: distribution_channel_id
-        description: Distribution channel (e.g. online, retail)
+        description: Canal de distribución (ej. online, retail)
         dimension:
           type: categorical
       - name: division_id
-        description: Product division
+        description: División del producto
         dimension:
           type: categorical
       - name: plant_id
-        description: Plant fulfilling the order
+        description: Planta que cumple la orden
       - name: document_date
-        description: Date the sales document was created
+        description: Fecha en que se creó el documento de venta
         granularity: day
         dimension:
           type: time
       - name: requested_delivery_date
-        description: Requested delivery date
+        description: Fecha de entrega solicitada
         granularity: day
         dimension:
           type: time
       - name: sold_to_customer_id
-        description: Customer placing the order
+        description: Cliente que realiza la orden
       - name: sales_document_id
-        description: Unique ID of the sales document
+        description: ID único del documento de venta
       - name: material_id
-        description: ID of the material or product sold
+        description: ID del material o producto vendido
       - name: material_group_id
-        description: Grouping of similar materials
+        description: Agrupación de materiales similares
         dimension:
           type: categorical
       - name: sales_document_item_category_id
-        description: Sales item category (e.g. standard, service)
+        description: Categoría del ítem de venta (ej. estándar, servicio)
         dimension:
           type: categorical
       - name: product_hierarchy_id
-        description: Product hierarchy classification
+        description: Clasificación de jerarquía de producto
         dimension:
           type: categorical
       - name: base_uom_id
-        description: Base unit of measure for the material
+        description: Unidad de medida base del material
         dimension:
           type: categorical
       - name: order_quantity
-        description: Quantity ordered
+        description: Cantidad pedida
       - name: sales_uom_id
-        description: Sales unit of measure
+        description: Unidad de medida de ventas
         dimension:
           type: categorical
       - name: net_value
-        description: Net value of the sales order item
+        description: Valor neto del ítem de la orden de venta
       - name: net_price
-        description: Net price per unit
+        description: Precio neto por unidad
       - name: sd_document_currency_id
-        description: Currency of the sales document
+        description: Moneda del documento de venta
         dimension:
           type: categorical
       - name: gross_weight
-        description: Gross weight of the item
+        description: Peso bruto del ítem
       - name: weight_uom_id
-        description: Unit of measure for weight
+        description: Unidad de medida del peso
         dimension:
           type: categorical
       - name: created_date
-        description: Date the order was created
+        description: Fecha en que se creó la orden
         granularity: day
         dimension:
           type: time
       - name: returns_item
-        description: Flag indicating if this is a returns item
+        description: Indica si este es un ítem de devolución
         dimension:
           type: categorical
       - name: reason_rejection_id
-        description: Reason for item rejection
+        description: Motivo de rechazo del ítem
         dimension:
           type: categorical
       - name: delivery_status
-        description: Delivery status of the item
+        description: Estado de entrega del ítem
         dimension:
           type: categorical
       - name: overall_status
-        description: Overall status of the sales order
+        description: Estado general de la orden de venta
         dimension:
           type: categorical
       - name: item_delivery_status
-        description: Status of item delivery
+        description: Estado de entrega a nivel de ítem
         dimension:
           type: categorical
       - name: created_by
-        description: User who created the sales document
+        description: Usuario que creó el documento de venta
         dimension:
           type: categorical
       - name: _fivetran_deleted
-        description: Fivetran deletion marker
+        description: Marca de eliminación de Fivetran
       - name: _fivetran_synced
-        description: Fivetran sync timestamp
+        description: Marca de tiempo de sincronización de Fivetran
     metrics:
+
       - name: sales_order_quantity_total
         type: simple
         label: Cantidad Pedida en Ventas
@@ -934,6 +1039,380 @@ models:
         denominator: sales_net_value_total
 
 
+  - name: sap__fact_billing
+    description: Hechos y métricas a nivel de línea de facturación, construido a partir de VBRK/VBRP
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - billing_document_number
+              - billing_document_item
+    semantic_model:
+      enabled: true
+      name: fact_billing
+
+    agg_time_dimension: billing_date
+    derived_semantics:
+      entities:
+        - name: billing_line
+          type: primary
+          expr: "concat(client_id, '-', billing_document_id, '-', billing_document_item)"
+          label: Línea de Facturación
+        - name: customer
+          type: foreign
+          expr: "concat(client_id, '-', sold_to_customer_id)"
+          label: Cliente
+        - name: material
+          type: foreign
+          expr: "concat(client_id, '-', material_id)"
+          label: Material
+        - name: plant
+          type: foreign
+          expr: "concat(client_id, '-', plant_id)"
+          label: Planta
+        - name: sales_order_line
+          type: foreign
+          expr: "concat(client_id, '-', sales_document_id, '-', sales_document_item)"
+          label: Línea de Orden de Venta
+
+
+    columns:
+      - name: client_id
+        description: Mandante SAP (mandt) al que pertenece el documento de facturación
+        data_tests:
+          - not_null
+        dimension:
+          type: categorical
+      - name: billing_document_number
+        description: Número del documento de facturación
+        data_tests:
+          - not_null
+      - name: billing_document_item
+        description: Número de ítem del documento de facturación
+        data_tests:
+          - not_null
+      - name: billing_type_id
+        description: Tipo de facturación (ej. factura, nota de crédito)
+        dimension:
+          type: categorical
+      - name: sd_document_category
+        description: "Categoría del documento SD (ej. M = factura, O = nota de crédito, P = anulación de factura, N = anulación de nota de crédito)"
+        dimension:
+          type: categorical
+      - name: sold_to_customer_id
+        description: Cliente que está siendo facturado
+      - name: payer_party_id
+        description: Parte responsable del pago
+        dimension:
+          type: categorical
+      - name: sales_organization_id
+        description: Organización de ventas responsable del documento de facturación
+        dimension:
+          type: categorical
+      - name: distribution_channel_id
+        description: Canal de distribución (ej. online, retail)
+        dimension:
+          type: categorical
+      - name: division_id
+        description: División del producto
+        dimension:
+          type: categorical
+      - name: billing_date
+        description: Fecha en que se creó el documento de facturación
+        granularity: day
+        dimension:
+          type: time
+      - name: created_date
+        description: Fecha en que se registró el documento de facturación en SAP
+        granularity: day
+        dimension:
+          type: time
+      - name: sd_document_currency_id
+        description: Moneda del documento de facturación
+        dimension:
+          type: categorical
+      - name: payment_terms_id
+        description: Condiciones de pago del documento de facturación
+        dimension:
+          type: categorical
+      - name: cancellation_indicator
+        description: Indica si el documento de facturación fue anulado
+        dimension:
+          type: categorical
+      - name: billing_document_id
+        description: ID único del documento de facturación
+      - name: material_id
+        description: ID del material o producto facturado
+      - name: plant_id
+        description: Planta que cumplió el ítem facturado
+      - name: sales_document_id
+        description: Número del documento de venta de origen, si existe
+      - name: sales_document_item
+        description: Número de ítem del documento de venta de origen, si existe
+      - name: billed_quantity
+        description: Cantidad facturada
+      - name: sales_uom_id
+        description: Unidad de medida de ventas
+        dimension:
+          type: categorical
+      - name: net_value
+        description: Valor neto del ítem de facturación (signo invertido en anulaciones)
+      - name: tax_amount
+        description: Monto de impuestos del ítem de facturación (signo invertido en anulaciones)
+      - name: _fivetran_deleted
+        description: Marca de eliminación de Fivetran
+      - name: _fivetran_synced
+        description: Marca de tiempo de sincronización de Fivetran
+    metrics:
+
+      - name: billing_net_value_total
+        type: simple
+        label: Valor Neto de Facturación
+        agg: sum
+        expr: net_value
+      - name: billing_quantity_total
+        type: simple
+        label: Cantidad Facturada
+        agg: sum
+        expr: billed_quantity
+      - name: billing_tax_amount_total
+        type: simple
+        label: Monto de Impuestos Facturados
+        agg: sum
+        expr: tax_amount
+      - name: billing_line_count
+        type: simple
+        label: Cantidad de Líneas de Facturación
+        agg: count
+        expr: "1"
+      - name: billing_net_value_average
+        description: Valor neto de facturación promedio por línea
+        type: ratio
+        label: Valor Promedio de Facturación
+        numerator: billing_net_value_total
+        denominator: billing_line_count
+      - name: billing_net_value_cumulative
+        description: Total acumulado del valor neto de facturación a lo largo de todo el período
+        type: cumulative
+        label: Valor Neto de Facturación Acumulado (Histórico)
+        input_metric: billing_net_value_total
+      - name: billing_net_value_mtd
+        description: Valor neto de facturación acumulado desde el inicio del mes
+        type: cumulative
+        label: Valor Neto de Facturación (Acum. del Mes)
+        grain_to_date: month
+        input_metric: billing_net_value_total
+      - name: billing_net_value_growth_mom
+        description: Crecimiento porcentual del valor neto de facturación respecto al mes anterior
+        type: derived
+        label: Crecimiento % del Valor Neto de Facturación M/M
+        expr: (current_month - prior_month) * 100 / nullif(prior_month, 0)
+        input_metrics:
+          - name: billing_net_value_total
+            alias: current_month
+          - name: billing_net_value_total
+            alias: prior_month
+            offset_window: 1 month
+
+
+  - name: sap__fact_delivery
+    description: Hechos y métricas a nivel de línea de entrega, construido a partir de LIKP/LIPS
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - client_id
+              - delivery_document_number
+              - delivery_document_item
+    semantic_model:
+      enabled: true
+      name: fact_delivery
+
+    agg_time_dimension: delivery_date
+    derived_semantics:
+      entities:
+        - name: delivery_line
+          type: primary
+          expr: "concat(client_id, '-', delivery_document_id, '-', delivery_document_item)"
+          label: Línea de Entrega
+        - name: customer
+          type: foreign
+          expr: "concat(client_id, '-', ship_to_party_id)"
+          label: Cliente
+        - name: material
+          type: foreign
+          expr: "concat(client_id, '-', material_id)"
+          label: Material
+        - name: plant
+          type: foreign
+          expr: "concat(client_id, '-', plant_id)"
+          label: Planta
+        - name: sales_order_line
+          type: foreign
+          expr: "concat(client_id, '-', sales_document_id, '-', sales_document_item)"
+          label: Línea de Orden de Venta
+
+    columns:
+      - name: client_id
+        description: Mandante SAP (mandt) al que pertenece el documento de entrega
+        data_tests:
+          - not_null
+        dimension:
+          type: categorical
+      - name: delivery_document_number
+        description: Número del documento de entrega
+        data_tests:
+          - not_null
+      - name: delivery_document_item
+        description: Número de ítem del documento de entrega
+        data_tests:
+          - not_null
+      - name: delivery_type_id
+        description: Tipo de entrega
+        dimension:
+          type: categorical
+      - name: sd_document_category
+        description: Categoría del documento SD de la entrega
+        dimension:
+          type: categorical
+      - name: ship_to_party_id
+        description: Cliente que recibe la entrega
+      - name: shipping_plant_id
+        description: Planta responsable del documento de entrega (nivel cabecera)
+        dimension:
+          type: categorical
+      - name: shipping_point_id
+        description: Punto de expedición
+        dimension:
+          type: categorical
+      - name: route_id
+        description: Ruta utilizada para la entrega
+        dimension:
+          type: categorical
+      - name: sales_organization_id
+        description: Organización de ventas responsable de la entrega
+        dimension:
+          type: categorical
+      - name: delivery_date
+        description: Fecha en que se creó el documento de entrega
+        granularity: day
+
+        dimension:
+          type: time
+      - name: planned_goods_issue_date
+        description: Fecha planificada de salida de mercancía
+        granularity: day
+        dimension:
+          type: time
+      - name: actual_goods_issue_date
+        description: Fecha real de salida de mercancía
+        granularity: day
+        dimension:
+          type: time
+      - name: created_date
+        description: Fecha en que se registró el documento de entrega en SAP
+        granularity: day
+        dimension:
+          type: time
+      - name: sd_document_currency_id
+        description: Moneda del documento de entrega
+        dimension:
+          type: categorical
+      - name: total_weight
+        description: Peso total de la entrega (nivel cabecera)
+      - name: header_net_weight
+        description: Peso neto de la entrega (nivel cabecera)
+      - name: header_weight_uom_id
+        description: Unidad de medida del peso a nivel cabecera
+        dimension:
+          type: categorical
+      - name: header_volume
+        description: Volumen de la entrega (nivel cabecera)
+      - name: header_volume_uom_id
+        description: Unidad de medida del volumen a nivel cabecera
+        dimension:
+          type: categorical
+      - name: delivery_document_id
+        description: ID único del documento de entrega
+      - name: material_id
+        description: ID del material o producto entregado
+      - name: plant_id
+        description: Planta que cumplió el ítem entregado
+      - name: storage_location_id
+        description: Ubicación de almacenamiento desde donde se tomó el ítem
+        dimension:
+          type: categorical
+      - name: sales_document_id
+        description: Número del documento de venta de origen, si existe
+      - name: sales_document_item
+        description: Número de ítem del documento de venta de origen, si existe
+      - name: delivery_quantity
+        description: Cantidad entregada
+      - name: base_uom_id
+        description: Unidad de medida base del ítem entregado
+        dimension:
+          type: categorical
+      - name: net_value
+        description: Valor neto del ítem de entrega
+      - name: gross_weight
+        description: Peso bruto del ítem de entrega
+      - name: item_net_weight
+        description: Peso neto del ítem de entrega
+      - name: item_weight_uom_id
+        description: Unidad de medida del peso a nivel ítem
+        dimension:
+          type: categorical
+      - name: item_volume
+        description: Volumen del ítem de entrega
+      - name: item_volume_uom_id
+        description: Unidad de medida del volumen a nivel ítem
+        dimension:
+          type: categorical
+      - name: _fivetran_deleted
+        description: Marca de eliminación de Fivetran
+      - name: _fivetran_synced
+        description: Marca de tiempo de sincronización de Fivetran
+    metrics:
+
+      - name: delivery_net_value_total
+        type: simple
+        label: Valor Neto de Entregas
+        agg: sum
+        expr: net_value
+      - name: delivery_quantity_total
+        type: simple
+        label: Cantidad Entregada
+        agg: sum
+        expr: delivery_quantity
+      - name: delivery_gross_weight_total
+        type: simple
+        label: Peso Bruto Entregado
+        agg: sum
+        expr: gross_weight
+      - name: delivery_line_count
+        type: simple
+        label: Cantidad de Líneas de Entrega
+        agg: count
+        expr: "1"
+      - name: delivery_net_value_average
+        description: Valor neto de entregas promedio por línea
+        type: ratio
+        label: Valor Promedio de Entrega
+        numerator: delivery_net_value_total
+        denominator: delivery_line_count
+      - name: delivery_net_value_cumulative
+        description: Total acumulado del valor neto de entregas a lo largo de todo el período
+        type: cumulative
+        label: Valor Neto de Entregas Acumulado (Histórico)
+        input_metric: delivery_net_value_total
+      - name: delivery_net_value_mtd
+        description: Valor neto de entregas acumulado desde el inicio del mes
+        type: cumulative
+        label: Valor Neto de Entregas (Acum. del Mes)
+        grain_to_date: month
+        input_metric: delivery_net_value_total
+
 
 
 
@@ -954,4 +1433,36 @@ metrics:
         alias: revenue
       - name: purchase_order_amount_total
         alias: spend
+  - name: billing_to_sales_value_ratio
+    description: Valor neto de facturación como proporción del valor neto de ventas -- mide qué parte de lo vendido ya fue facturado
+    type: ratio
+    label: Relación Facturación/Ventas
+    numerator: billing_net_value_total
+    denominator: sales_net_value_total
+  - name: sales_net_value_unbilled_amount
+    description: Diferencia aproximada entre el valor neto de ventas y el valor neto de facturación -- monto vendido aún no facturado
+    type: derived
+    label: Monto de Ventas Sin Facturar
+    expr: sold - billed
+    input_metrics:
+      - name: sales_net_value_total
+        alias: sold
+      - name: billing_net_value_total
+        alias: billed
+  - name: delivery_to_sales_value_ratio
+    description: Valor neto de entregas como proporción del valor neto de ventas -- mide qué parte de lo vendido ya fue despachado
+    type: ratio
+    label: Relación Entregas/Ventas
+    numerator: delivery_net_value_total
+    denominator: sales_net_value_total
+  - name: sales_net_value_undelivered_amount
+    description: Diferencia aproximada entre el valor neto de ventas y el valor neto de entregas -- monto vendido aún no despachado
+    type: derived
+    label: Monto de Ventas Sin Entregar
+    expr: sold - delivered
+    input_metrics:
+      - name: sales_net_value_total
+        alias: sold
+      - name: delivery_net_value_total
+        alias: delivered
 

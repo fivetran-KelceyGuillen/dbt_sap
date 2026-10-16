@@ -1,0 +1,95 @@
+version: 2
+
+models:
+  - name: stg_sap__vbrk
+    description: Cabecera de documento de facturación (factura/nota de crédito). Agregado para la extensión de facturación del star schema sales_and_procurement.
+    columns:
+      - name: mandt
+        description: Mandante SAP (mandt)
+        data_tests:
+          - not_null
+      - name: vbeln
+        description: Número del documento de facturación
+        data_tests:
+          - not_null
+      - name: fkart
+        description: Tipo de facturación
+      - name: vbtyp
+        description: "Categoría del documento SD (ej. M = factura, O = nota de crédito, P = anulación de factura, N = anulación de nota de crédito)"
+      - name: kunag
+        description: Parte cliente (sold-to party)
+      - name: kunrg
+        description: Pagador
+      - name: vkorg
+        description: Organización de ventas
+      - name: vtweg
+        description: Canal de distribución
+      - name: spart
+        description: División
+      - name: fkdat
+        description: Fecha de facturación
+      - name: erdat
+        description: Fecha de creación
+      - name: netwr
+        description: Valor neto
+      - name: waerk
+        description: Moneda
+      - name: zterm
+        description: Condiciones de pago
+      - name: fksto
+        description: Indicador de cancelación
+      - name: _fivetran_deleted
+        description: Marca de eliminación de Fivetran
+      - name: _fivetran_synced
+        description: Marca de tiempo de sincronización de Fivetran
+
+  - name: stg_sap__vbrp
+    description: Ítem de documento de facturación. Agregado para la extensión de facturación del star schema sales_and_procurement.
+    columns:
+      - name: mandt
+        description: Mandante SAP (mandt)
+        data_tests:
+          - not_null
+      - name: vbeln
+        description: Número del documento de facturación
+        data_tests:
+          - not_null
+      - name: posnr
+        description: Número de ítem del documento de facturación
+        data_tests:
+          - not_null
+      - name: matnr
+        description: Número de material
+      - name: werks
+        description: Planta
+      - name: charg
+        description: Número de lote
+      - name: aubel
+        description: Número del documento de venta (orden) que originó este ítem de facturación
+      - name: aupos
+        description: Número de ítem del documento de venta que originó este ítem de facturación
+      - name: vgbel
+        description: Documento de referencia (documento precedente, ej. entrega)
+      - name: vgpos
+        description: Ítem del documento de referencia
+      - name: fkimg
+        description: Cantidad facturada
+      - name: vrkme
+        description: Unidad de medida de ventas
+      - name: netwr
+        description: Valor neto
+      - name: mwsbp
+        description: Monto de impuestos
+      - name: shkzg
+        description: Indicador de débito/crédito
+      - name: prctr
+        description: Centro de beneficio
+      - name: kostl
+        description: Centro de costo
+      - name: erdat
+        description: Fecha de creación
+      - name: _fivetran_deleted
+        description: Marca de eliminación de Fivetran
+      - name: _fivetran_synced
+        description: Marca de tiempo de sincronización de Fivetran
+

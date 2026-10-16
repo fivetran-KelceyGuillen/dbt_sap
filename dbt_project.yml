@@ -36,43 +36,46 @@ vars:
   prefix_table_name: ""
 
   # --- Source availability audit (confirmed via INFORMATION_SCHEMA.TABLES) ---
-  # The following SAP tables are not synced by this connector. Disabling them
-  # lets every model that depends on them -- directly or as an optional
+  # The following SAP tables are not synced by this connector yet. Disabling
+  # them lets every model that depends on them -- directly or as an optional
   # enrichment join -- degrade gracefully (skip the join, or disable itself
   # entirely if the table is its sole source) instead of erroring with
   # "table not found". Re-enable (remove the override) once the corresponding
   # SAP module is connected in Fivetran.
+  #
+  # Re-validated against INFORMATION_SCHEMA.TABLES -- the following 16 tables
+  # are now connected and have been re-enabled (removed from this list):
+  # marc, mchb, mchp, faglflexa, faglflext, tj01, tka01, t000, t006,
+  # t503, ska1, pa0000, pa0001, pa0007, pa0008, pa0031.
   sap_using_acdoca: false
-  sap_using_coep: false
-  sap_using_marc: false
-  sap_using_mchb: false
-  sap_using_mchp: false
   sap_using_matdoc: false
   sap_using_matdoc_extract: false
-  sap_using_faglflexa: false
-  sap_using_faglflext: false
   sap_using_finsc_cmp_versnd: false
   sap_using_finsc_ledger_rep: false
   sap_using_finsc_ld_cmp: false
-  sap_using_tj01: false
-  sap_using_tka01: false
-  sap_using_t000: false
-  sap_using_t006: false
-  sap_using_t503: false
-  sap_using_ska1: false
   sap_using_cosp_bak: false
-  sap_using_prps: false
-  sap_using_pa0000: false
-  sap_using_pa0001: false
-  sap_using_pa0007: false
-  sap_using_pa0008: false
-  sap_using_pa0031: false
   sap_using_bsak_bck: false
+  # coep now exists in the warehouse but only has 97 of the ~115 columns
+  # stg_sap__coep.sql expects (same pattern as prps: _fivetran_sap_archived
+  # is missing, plus likely more). No current downstream consumer either --
+  # everything that refs coep (compatibility_views coep/cosp/coss) also needs
+  # acdoca, which is still disconnected. Leave off until acdoca connects and
+  # that whole CO chain becomes worth a real column audit.
+  sap_using_coep: false
+
+  # prps now exists in the warehouse, but its real schema only has 123 of the
+  # ~144 columns stg_sap__prps.sql expects (confirmed: vbeln_prps and others
+  # are missing). It also has no current downstream consumer -- int_coep__
+  # original is the only ref, and that chain stays disabled until acdoca is
+  # connected too. Leaving this off until a dedicated column-by-column audit
+  # is done (do that together with acdoca, when the CO chain becomes usable).
+  sap_using_prps: false
   # sapsll_clsnr's source config uses a typo'd double-underscore var name
   # (sap_using__sapsll_clsnr) while its staging model checks the normal
   # single-underscore name -- set both so the source and model agree.
   sap_using__sapsll_clsnr: false
   sap_using_sapsll_clsnr: false
+
 
   sap_using_sapsll_maritc: false
   sap_using_sapsll_nosca: false
@@ -85,6 +88,8 @@ vars:
   # bsad_bck exists under a different identifier for this connector (bsad_bak,
   # not bsad_bck) -- point the source at the real table instead of disabling it.
   sap_bsad_bck_identifier: "bsad_bak"
+
+
 
   sap:
     acdoca: "{{ source('sap', 'acdoca') }}"
@@ -146,5 +151,13 @@ vars:
     sapsll_maritc: "{{ source('sap', 'sapsll_maritc') }}"
     sapsll_nosca: "{{ source('sap', 'sapsll_nosca') }}"
     sapsll_tunos: "{{ source('sap', 'sapsll_tunos') }}"
+    # Added for the deliveries/billing extension of the sales_and_procurement
+    # star schema -- not part of the original dbt-sap package.
+    likp: "{{ source('sap', 'likp') }}"
+    lips: "{{ source('sap', 'lips') }}"
+    vbrk: "{{ source('sap', 'vbrk') }}"
+    vbrp: "{{ source('sap', 'vbrp') }}"
+    knvv: "{{ source('sap', 'knvv') }}"
 flags:
   require_generic_test_arguments_property: true
+

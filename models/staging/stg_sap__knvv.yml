@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: stg_sap__knvv
+    description: Datos de área de ventas del maestro de clientes (grano cliente / organización de ventas / canal de distribución / división). Agregado para enriquecer el star schema sales_and_procurement con atributos de cliente específicos del área de ventas.
+    columns:
+      - name: mandt
+        description: Mandante SAP (mandt)
+        data_tests:
+          - not_null
+      - name: kunnr
+        description: Número de cliente
+        data_tests:
+          - not_null
+      - name: vkorg
+        description: Organización de ventas
+        data_tests:
+          - not_null
+      - name: vtweg
+        description: Canal de distribución
+        data_tests:
+          - not_null
+      - name: spart
+        description: División
+        data_tests:
+          - not_null
+      - name: kdgrp
+        description: Grupo de cliente
+      - name: bzirk
+        description: Zona de ventas
+      - name: vkbur
+        description: Oficina de ventas
+      - name: vkgrp
+        description: Grupo de ventas
+      - name: waers
+        description: Moneda
+      - name: zterm
+        description: Condiciones de pago
+      - name: antlf
+        description: Cantidad máxima de entregas parciales
+      - name: autlf
+        description: Indicador de entrega completa
+      - name: lifsd
+        description: Bloqueo de entrega
+      - name: faksd
+        description: Bloqueo de facturación
+      - name: loevm
+        description: Marca de eliminación
+      - name: erdat
+        description: Fecha de creación
+      - name: _fivetran_deleted
+        description: Marca de eliminación de Fivetran
+      - name: _fivetran_synced
+        description: Marca de tiempo de sincronización de Fivetran
+

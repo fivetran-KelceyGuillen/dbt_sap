@@ -100,7 +100,7 @@ final as (
         fsh_kvgr8,
         ernam,
         hb_cont_reason,
-        cast(netwr as {{ dbt.type_numeric() }}) as netwr,
+        safe_cast(netwr as {{ dbt.type_numeric() }}) as netwr,
         vbkla,
         vgtyp,
         sbgrp,
