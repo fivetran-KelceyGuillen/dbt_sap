@@ -9,26 +9,51 @@ models:
             combination_of_columns:
               - mandt
               - bukrs
+    semantic_model:
+      enabled: true
+      name: comp_code_attr
+    derived_semantics:
+      entities:
+        - name: company
+          type: primary
+          expr: "concat(mandt, '-', bukrs)"
+          label: Company Code
     columns:
 
       - name: mandt
         description: Client
+        dimension:
+          type: categorical
       - name: bukrs
         description: Company code
       - name: waers
         description: Currency key
+        dimension:
+          type: categorical
       - name: periv
         description: Fiscal year variant
+        dimension:
+          type: categorical
       - name: ktopl
         description: Chart of accounts
+        dimension:
+          type: categorical
       - name: bukrs
         description: Company code
       - name: land1
         description: Country key
+        dimension:
+          type: categorical
       - name: kkber
         description: Credit control area
+        dimension:
+          type: categorical
       - name: rcomp
         description: Company
+        dimension:
+          type: categorical
+
+
 
   - name: sap__0comp_code_text
     description: This model is used for loading company code text information, extracting from the t001 data source.
@@ -75,36 +100,63 @@ models:
             combination_of_columns:
               - mandt
               - kunnr
+    semantic_model:
+      enabled: true
+      name: customer_attr
+    derived_semantics:
+      entities:
+        - name: customer
+          type: primary
+          expr: "concat(mandt, '-', kunnr)"
+          label: Customer
     columns:
 
       - name: mandt
         description: Client
+        dimension:
+          type: categorical
       - name: kunnr
         description: Customer number
       - name: brsch
         description: Industry key
+        dimension:
+          type: categorical
       - name: ktokd
         description: Customer account group
+        dimension:
+          type: categorical
       - name: kukla
         description: Customer classification
+        dimension:
+          type: categorical
       - name: land1
         description: Country key
+        dimension:
+          type: categorical
       - name: lifnr
         description: Account number of vendor or creditor
       - name: loevm
         description: Central deletion flag for master record
+        dimension:
+          type: categorical
       - name: name1
         description: Name 1
       - name: niels
         description: Nielsen ID
       - name: ort01
         description: City
+        dimension:
+          type: categorical
       - name: pstlz
         description: Postal code
       - name: regio
         description: Regional market
+        dimension:
+          type: categorical
       - name: counc
         description: County code
+        dimension:
+          type: categorical
       - name: stcd1
         description: Tax number 1
       - name: stras
@@ -115,6 +167,8 @@ models:
         description: Company id of trading partner
       - name: bran1
         description: Industry code 1
+        dimension:
+          type: categorical
       - name: bran2
         description: Industry code 2
       - name: bran3
@@ -137,6 +191,8 @@ models:
         description: Indicator (Consumer)
       - name: pstl2
         description: PO Box postal code
+
+
 
   - name: sap__0employee_attr
     description: This model contains information that concerns the employee's work relationship, extracting master data from the personnel administration tables.
@@ -677,6 +733,15 @@ models:
             combination_of_columns:
               - mandt
               - matnr
+    semantic_model:
+      enabled: true
+      name: material_attr
+    derived_semantics:
+      entities:
+        - name: material
+          type: primary
+          expr: "concat(mandt, '-', matnr)"
+          label: Material
     columns:
 
       - name: _fivetran_deleted
@@ -687,12 +752,15 @@ models:
         description: Fivetran sync timestamp
       - name: mandt
         description: Client
+        dimension:
+          type: categorical
       - name: matnr
         description: Material number
       - name: ersda
         description: Created on
       - name: ernam
         description: Name of person who created the object
+
       - name: laeda
         description: Date of last change
       - name: aenam
@@ -705,14 +773,26 @@ models:
         description: Flag material for deletion at client level
       - name: mtart
         description: Material type
+        dimension:
+          type: categorical
+
       - name: mbrsh
         description: Industry sector
+        dimension:
+          type: categorical
+
       - name: matkl
         description: Material group
+        dimension:
+          type: categorical
+
       - name: bismt
         description: Old material number
       - name: meins
         description: Base unit of measure
+        dimension:
+          type: categorical
+
       - name: bstme
         description: Order unit
       - name: zeinr
@@ -946,28 +1026,51 @@ models:
             combination_of_columns:
               - mandt
               - lifnr
+    semantic_model:
+      enabled: true
+      name: vendor_attr
+    derived_semantics:
+      entities:
+        - name: vendor
+          type: primary
+          expr: "concat(mandt, '-', lifnr)"
+          label: Vendor
     columns:
 
       - name: mandt
         description: Client
+        dimension:
+          type: categorical
       - name: lifnr
         description: Account number of vendor or creditor
       - name: brsch
         description: Industry key
+        dimension:
+          type: categorical
       - name: ktokk
         description: Vendor account group
+        dimension:
+          type: categorical
       - name: land1
         description: Country key
+        dimension:
+          type: categorical
       - name: loevm
         description: Central deletion flag for master record
+        dimension:
+          type: categorical
       - name: name1
         description: Name 1
+        dimension:
+          type: categorical
       - name: name2
         description: Name 2
       - name: name3
         description: Name 3
       - name: ort01
         description: City
+        dimension:
+          type: categorical
       - name: ort02
         description: District
       - name: pfach
@@ -978,6 +1081,8 @@ models:
         description: Postal code
       - name: regio
         description: Region (State, province, county)
+        dimension:
+          type: categorical
       - name: sortl
         description: Sort field
       - name: spras
@@ -1004,6 +1109,8 @@ models:
         description: PO box city
       - name: werks
         description: Plant
+
+
 
   - name: sap__0vendor_text
     description: This model is used to display vendor text, originating from the lfa1 source.
