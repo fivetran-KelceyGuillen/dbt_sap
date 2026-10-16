@@ -8,19 +8,39 @@ models:
             combination_of_columns:
               - client_id
               - customer_id
+    semantic_model:
+      enabled: true
+      name: dim_customer
+
+    derived_semantics:
+      entities:
+        - name: customer
+          type: primary
+          expr: "concat(client_id, '-', customer_id)"
+          label: Customer
     columns:
       - name: client_id
         description: SAP client (mandt) the customer record belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: customer_number
         description: Unique identifier of the customer in SAP
+        dimension:
+          type: categorical
       - name: country_key_id
         description: Country key associated with the customer
+        dimension:
+          type: categorical
       - name: customer_name
         description: Full name of the customer
+        dimension:
+          type: categorical
       - name: city
         description: Customer’s city of residence
+        dimension:
+          type: categorical
       - name: customer_id
         description: Surrogate key for the customer
         data_tests:
@@ -34,25 +54,49 @@ models:
             combination_of_columns:
               - client_id
               - material_id
+    semantic_model:
+      enabled: true
+      name: dim_material
+
+    derived_semantics:
+      entities:
+        - name: material
+          type: primary
+          expr: "concat(client_id, '-', material_id)"
+          label: Material
     columns:
       - name: client_id
         description: SAP client (mandt) the material record belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: material_number
         description: Unique identifier for the material
+        dimension:
+          type: categorical
       - name: material_description
         description: Text description of the material
+        dimension:
+          type: categorical
       - name: material_type_id
         description: Identifier for material type (e.g., finished goods)
+        dimension:
+          type: categorical
       - name: material_type_description
         description: Description of the material type
+        dimension:
+          type: categorical
       - name: base_uom_id
         description: Base unit of measure for the material
+        dimension:
+          type: categorical
       - name: gross_weight
         description: Gross weight of the material
       - name: weight_uom_id
         description: Unit of measure for weight
+        dimension:
+          type: categorical
       - name: material_id
         description: Surrogate key for the material
         data_tests:
@@ -66,19 +110,35 @@ models:
             combination_of_columns:
               - client_id
               - plant_id
+    semantic_model:
+      enabled: true
+      name: dim_plant
+
+    derived_semantics:
+      entities:
+        - name: plant
+          type: primary
+          expr: "concat(client_id, '-', plant_id)"
+          label: Plant
     columns:
       - name: client_id
         description: SAP client (mandt) the plant record belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: plant_id
         description: Unique identifier for the plant
         data_tests:
           - not_null
       - name: plant_name
         description: Name of the plant
+        dimension:
+          type: categorical
       - name: country_key_id
         description: Country key
+        dimension:
+          type: categorical
 
   - name: sap__dim_purchasing_order
     description: Purchasing document header attributes
@@ -88,35 +148,71 @@ models:
             combination_of_columns:
               - client_id
               - purchasing_document_id
+    semantic_model:
+      enabled: true
+      name: dim_purchasing_order
+
+    derived_semantics:
+      entities:
+        - name: purchasing_document
+          type: primary
+          expr: "concat(client_id, '-', purchasing_document_id)"
+          label: Purchasing Document
+        - name: company
+          type: foreign
+          expr: "concat(client_id, '-', company_code_id)"
+          label: Company Code
     columns:
       - name: client_id
         description: SAP client (mandt) the purchasing document belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: purchasing_document_id
         description: Unique ID of the purchasing document
         data_tests:
           - not_null
       - name: purchasing_document_category
         description: Category code of the purchasing document
+        dimension:
+          type: categorical
       - name: purchasing_document_category_txt
         description: Description of the document category
+        dimension:
+          type: categorical
       - name: purchasing_document_type_id
         description: Document type code (e.g. NB, FO)
+        dimension:
+          type: categorical
       - name: purchasing_document_type_text
         description: Description of the purchasing document type
+        dimension:
+          type: categorical
       - name: purchasing_group_id
         description: ID of the purchasing group
+        dimension:
+          type: categorical
       - name: description_purchasing_group
         description: Description of the purchasing group
+        dimension:
+          type: categorical
       - name: purchasing_document_status
         description: Status code of the purchasing document
+        dimension:
+          type: categorical
       - name: purchasing_document_status_txt
         description: Description of document status
+        dimension:
+          type: categorical
       - name: payment_terms
         description: Terms of payment key
+        dimension:
+          type: categorical
       - name: reason_cancellation_id
         description: Reason code for cancellation
+        dimension:
+          type: categorical
       - name: company_code_id
         description: Company code associated with the document
 
@@ -129,11 +225,27 @@ models:
               - client_id
               - company_code_id
               - purchasing_organization_id
+    semantic_model:
+      enabled: true
+      name: dim_purchasing_organization
+
+    derived_semantics:
+      entities:
+        - name: purchasing_organization
+          type: primary
+          expr: "concat(client_id, '-', company_code_id, '-', purchasing_organization_id)"
+          label: Purchasing Organization
+        - name: company
+          type: foreign
+          expr: "concat(client_id, '-', company_code_id)"
+          label: Company Code
     columns:
       - name: client_id
         description: SAP client (mandt) the purchasing organization belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: company_code_id
         description: Company code assigned to the organization
         data_tests:
@@ -144,6 +256,8 @@ models:
           - not_null
       - name: description
         description: Description of the purchasing organization
+        dimension:
+          type: categorical
 
   - name: sap__dim_rejection_reason
     description: Reasons for purchase/sales document rejections
@@ -153,17 +267,31 @@ models:
             combination_of_columns:
               - client_id
               - reason_rejection_id
+    semantic_model:
+      enabled: true
+      name: dim_rejection_reason
+
+    derived_semantics:
+      entities:
+        - name: rejection_reason
+          type: primary
+          expr: "concat(client_id, '-', reason_rejection_id)"
+          label: Rejection Reason
     columns:
       - name: client_id
         description: SAP client (mandt) the rejection reason belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: reason_rejection_id
         description: Code for rejection reason
         data_tests:
           - not_null
       - name: rejection_reason_description
         description: Description of the rejection reason
+        dimension:
+          type: categorical
 
   - name: sap__dim_vendor
     description: Vendor dimension table.
@@ -173,33 +301,63 @@ models:
             combination_of_columns:
               - client_id
               - vendor_id
+    semantic_model:
+      enabled: true
+      name: dim_vendor
+
+    derived_semantics:
+      entities:
+        - name: vendor
+          type: primary
+          expr: "concat(client_id, '-', vendor_id)"
+          label: Vendor
     columns:
       - name: client_id
         description: SAP client (mandt) the vendor record belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: vendor_id
         description: ID of the vendor
         data_tests:
           - not_null
       - name: country_key_id
         description: Country key of the vendor
+        dimension:
+          type: categorical
       - name: name
         description: Vendor name (line 1)
+        dimension:
+          type: categorical
       - name: name_2
         description: Vendor name (line 2)
+        dimension:
+          type: categorical
       - name: city
         description: Vendor city
+        dimension:
+          type: categorical
       - name: sort_field
         description: Sort field for vendor
+        dimension:
+          type: categorical
       - name: authorization_group_id
         description: Authorization group ID
+        dimension:
+          type: categorical
       - name: industry_key_id
         description: Industry classification key
+        dimension:
+          type: categorical
       - name: group_key
         description: Grouping key for vendors
+        dimension:
+          type: categorical
       - name: vendor_account_group_id
         description: Account group ID for the vendor
+        dimension:
+          type: categorical
 
   - name: sap__fact_purchasing_order
     description: Line-level metrics for purchasing documents
@@ -210,11 +368,48 @@ models:
               - client_id
               - purchasing_document_id
               - purchasing_document_item_id
+    semantic_model:
+      enabled: true
+      name: fact_purchasing_order
+
+    agg_time_dimension: purchasing_document_date
+    derived_semantics:
+      entities:
+        - name: purchasing_order_line
+          type: primary
+          expr: "concat(client_id, '-', purchasing_document_id, '-', purchasing_document_item_id)"
+          label: Purchasing Order Line
+        - name: purchasing_document
+          type: foreign
+          expr: "concat(client_id, '-', purchasing_document_id)"
+          label: Purchasing Document
+        - name: material
+          type: foreign
+          expr: "concat(client_id, '-', material_id)"
+          label: Material
+        - name: plant
+          type: foreign
+          expr: "concat(client_id, '-', plant_id)"
+          label: Plant
+        - name: vendor
+          type: foreign
+          expr: "concat(client_id, '-', vendor_id)"
+          label: Vendor
+        - name: purchasing_organization
+          type: foreign
+          expr: "concat(client_id, '-', company_code_id, '-', purchasing_organization_id)"
+          label: Purchasing Organization
+        - name: company
+          type: foreign
+          expr: "concat(client_id, '-', company_code_id)"
+          label: Company Code
     columns:
       - name: client_id
         description: SAP client (mandt) the purchasing document belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: purchasing_document_id
         description: ID of the purchasing document
         data_tests:
@@ -227,22 +422,34 @@ models:
         description: Company code that created the order
       - name: currency_id
         description: Currency used in the transaction
+        dimension:
+          type: categorical
       - name: material_id
         description: Foreign key to the material master
       - name: plant_id
         description: Plant where the goods are delivered
       - name: purchasing_group_id
         description: Responsible purchasing group
+        dimension:
+          type: categorical
       - name: purchasing_organization_id
         description: Responsible purchasing organization
       - name: vendor_id
         description: Vendor supplying the goods
       - name: order_uom_id
         description: Unit of measure for the order
+        dimension:
+          type: categorical
       - name: purchasing_document_date
         description: Creation date of the purchasing document
+        granularity: day
+        dimension:
+          type: time
       - name: scheduled_delivery_date
         description: Planned date of delivery
+        granularity: day
+        dimension:
+          type: time
       - name: purchase_deliver_late_days
         description: Days the delivery was late
       - name: purchase_late_lead_days
@@ -263,6 +470,8 @@ models:
         description: Order value in document currency
       - name: document_currency_id
         description: Currency code for the order
+        dimension:
+          type: categorical
       - name: purchase_open_amount
         description: Value of undelivered quantity
       - name: purchase_delivered_amount
@@ -283,14 +492,110 @@ models:
         description: Number of closed/completed items
       - name: returns_item
         description: Indicates if the item is a return ('' if not a return)
+        dimension:
+          type: categorical
       - name: rejection_indicator
         description: Flag indicating whether the item has been rejected
+        dimension:
+          type: categorical
       - name: exchange_rate
         description: Exchange rate between the document currency and local currency
       - name: latest_goods_receive_date
         description: Most recent goods receipt date recorded
+        granularity: day
+        dimension:
+          type: time
       - name: delivery_completed
         description: Flag indicating whether delivery for the item is complete
+        dimension:
+          type: categorical
+    metrics:
+      - name: purchase_order_quantity_total
+        type: simple
+        label: Purchase Order Quantity
+        agg: sum
+        expr: purchase_order_quantity
+      - name: purchase_order_amount_total
+        type: simple
+        label: Purchase Order Amount
+        agg: sum
+        expr: purchase_order_amount
+      - name: purchase_delivered_quantity_total
+        type: simple
+        label: Purchase Delivered Quantity
+        agg: sum
+        expr: purchasing_delivered_quantity
+      - name: purchase_delivered_amount_total
+        type: simple
+        label: Purchase Delivered Amount
+        agg: sum
+        expr: purchase_delivered_amount
+      - name: purchase_open_quantity_total
+        type: simple
+        label: Purchase Open Quantity
+        agg: sum
+        expr: purchase_open_quantity
+      - name: purchase_open_amount_total
+        type: simple
+        label: Purchase Open Amount
+        agg: sum
+        expr: purchase_open_amount
+      - name: purchase_late_quantity_total
+        type: simple
+        label: Purchase Late Quantity
+        agg: sum
+        expr: purchase_late_quantity
+      - name: purchase_late_amount_total
+        type: simple
+        label: Purchase Late Amount
+        agg: sum
+        expr: purchase_late_amount
+      - name: purchase_cancelled_quantity_total
+        type: simple
+        label: Purchase Cancelled Quantity
+        agg: sum
+        expr: cancel_purchase_quantity
+      - name: purchase_cancelled_amount_total
+        type: simple
+        label: Purchase Cancelled Amount
+        agg: sum
+        expr: cancel_purchase_amount
+      - name: purchase_invoiced_amount_total
+        type: simple
+        label: Purchase Invoiced Amount
+        agg: sum
+        expr: purchase_invoiced_amount
+      - name: purchase_order_line_count
+        type: simple
+        label: Purchase Order Line Count
+        agg: count
+        expr: "1"
+      - name: purchase_late_item_count
+        type: simple
+        label: Purchase Late Item Count
+        agg: sum
+        expr: purchase_item_late_count
+      - name: purchase_open_item_count
+        type: simple
+        label: Purchase Open Item Count
+        agg: sum
+        expr: purchase_item_open_count
+      - name: purchase_closed_item_count
+        type: simple
+        label: Purchase Closed Item Count
+        agg: sum
+        expr: purchase_item_closed_count
+      - name: purchase_deliver_late_days_average
+        type: simple
+        label: Average Purchase Deliver Late Days
+        agg: average
+        expr: purchase_deliver_late_days
+      - name: purchase_late_delivery_rate
+        description: Share of purchase order lines that were delivered late
+        type: ratio
+        label: Purchase Late Delivery Rate
+        numerator: purchase_late_item_count
+        denominator: purchase_order_line_count
 
   - name: sap__fact_sales_order
     description: Line-level sales order facts and metrics
@@ -301,11 +606,36 @@ models:
               - client_id
               - sales_document_number
               - sales_document_item
+    semantic_model:
+      enabled: true
+      name: fact_sales_order
+
+    agg_time_dimension: document_date
+    derived_semantics:
+      entities:
+        - name: sales_order_line
+          type: primary
+          expr: "concat(client_id, '-', sales_document_id, '-', sales_document_item)"
+          label: Sales Order Line
+        - name: customer
+          type: foreign
+          expr: "concat(client_id, '-', sold_to_customer_id)"
+          label: Customer
+        - name: material
+          type: foreign
+          expr: "concat(client_id, '-', material_id)"
+          label: Material
+        - name: plant
+          type: foreign
+          expr: "concat(client_id, '-', plant_id)"
+          label: Plant
     columns:
       - name: client_id
         description: SAP client (mandt) the sales document belongs to
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: sales_document_number
         description: Sales document number
         data_tests:
@@ -320,24 +650,44 @@ models:
           - accepted_values:
               arguments:
                 values: ['c', 'h']
+        dimension:
+          type: categorical
       - name: sales_document_type_id
         description: Type of sales document
+        dimension:
+          type: categorical
       - name: order_reason_id
         description: Reason code for sales order
+        dimension:
+          type: categorical
       - name: delivery_block_id
         description: Delivery block reason code
+        dimension:
+          type: categorical
       - name: sales_organization_id
         description: Sales organization responsible for the sale
+        dimension:
+          type: categorical
       - name: distribution_channel_id
         description: Distribution channel (e.g. online, retail)
+        dimension:
+          type: categorical
       - name: division_id
         description: Product division
+        dimension:
+          type: categorical
       - name: plant_id
         description: Plant fulfilling the order
       - name: document_date
         description: Date the sales document was created
+        granularity: day
+        dimension:
+          type: time
       - name: requested_delivery_date
         description: Requested delivery date
+        granularity: day
+        dimension:
+          type: time
       - name: sold_to_customer_id
         description: Customer placing the order
       - name: sales_document_id
@@ -346,42 +696,96 @@ models:
         description: ID of the material or product sold
       - name: material_group_id
         description: Grouping of similar materials
+        dimension:
+          type: categorical
       - name: sales_document_item_category_id
         description: Sales item category (e.g. standard, service)
+        dimension:
+          type: categorical
       - name: product_hierarchy_id
         description: Product hierarchy classification
+        dimension:
+          type: categorical
       - name: base_uom_id
         description: Base unit of measure for the material
+        dimension:
+          type: categorical
       - name: order_quantity
         description: Quantity ordered
       - name: sales_uom_id
         description: Sales unit of measure
+        dimension:
+          type: categorical
       - name: net_value
         description: Net value of the sales order item
       - name: net_price
         description: Net price per unit
       - name: sd_document_currency_id
         description: Currency of the sales document
+        dimension:
+          type: categorical
       - name: gross_weight
         description: Gross weight of the item
       - name: weight_uom_id
         description: Unit of measure for weight
+        dimension:
+          type: categorical
       - name: created_date
         description: Date the order was created
+        granularity: day
+        dimension:
+          type: time
       - name: returns_item
         description: Flag indicating if this is a returns item
+        dimension:
+          type: categorical
       - name: reason_rejection_id
         description: Reason for item rejection
+        dimension:
+          type: categorical
       - name: delivery_status
         description: Delivery status of the item
+        dimension:
+          type: categorical
       - name: overall_status
         description: Overall status of the sales order
+        dimension:
+          type: categorical
       - name: item_delivery_status
         description: Status of item delivery
+        dimension:
+          type: categorical
       - name: created_by
         description: User who created the sales document
+        dimension:
+          type: categorical
       - name: _fivetran_deleted
         description: Fivetran deletion marker
       - name: _fivetran_synced
         description: Fivetran sync timestamp
-
+    metrics:
+      - name: sales_order_quantity_total
+        type: simple
+        label: Sales Order Quantity
+        agg: sum
+        expr: order_quantity
+      - name: sales_net_value_total
+        type: simple
+        label: Sales Net Value
+        agg: sum
+        expr: net_value
+      - name: sales_net_price_average
+        type: simple
+        label: Average Sales Net Price
+        agg: average
+        expr: net_price
+      - name: sales_gross_weight_total
+        type: simple
+        label: Sales Gross Weight
+        agg: sum
+        expr: gross_weight
+      - name: sales_order_line_count
+        type: simple
+        label: Sales Order Line Count
+        agg: count
+        expr: "1"

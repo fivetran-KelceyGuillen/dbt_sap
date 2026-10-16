@@ -1,0 +1,10 @@
+version: 2
+models:
+  - name: time_spine_daily
+    description: Daily time spine used by MetricFlow for time-based joins and aggregations across the sales_and_procurement semantic layer.
+    time_spine:
+      standard_granularity_column: date_day
+    columns:
+      - name: date_day
+        description: Calendar date, one row per day from 2000-01-01 through 2029-12-31
+        granularity: day
