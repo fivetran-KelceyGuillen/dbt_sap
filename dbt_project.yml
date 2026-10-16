@@ -25,11 +25,8 @@ models:
     compatibility_views:
       +schema: kel_dbt
       +materialized: view
-      intermediate:
-        +schema: kel_dbt
-        +materialized: ephemeral
-        int_cosp__acdoca_derived:
-          +materialized: view
+
+
 
 vars:
   sap_schema: "kel_gcs_sap_hana_db_sapabap1"
