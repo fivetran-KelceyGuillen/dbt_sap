@@ -29,7 +29,9 @@ with sales_document_header as (
 
 ), final as (
     select
+        sales_document_header.client_id,
         ltrim(sales_document_header.sales_document_id, '0') as sales_document_number,
+
         sales_document_header.sd_document_category,
         sales_document_header.sales_document_type_id,
         sales_document_header.order_reason_id,
@@ -85,17 +87,20 @@ with sales_document_header as (
     {% if using_sales_document_item %}
     inner join sales_document_item
         on sales_document_header.sales_document_id = sales_document_item.sales_document_id
+        and sales_document_header.client_id = sales_document_item.client_id
     {% endif %}
 
     {% if using_sales_document_header_status %}
     inner join sales_document_header_status
         on sales_document_header.sales_document_id = sales_document_header_status.sales_document_id
+        and sales_document_header.client_id = sales_document_header_status.client_id
     {% endif %}
 
     {% if using_sales_document_item_status %}
     inner join sales_document_item_status
         on sales_document_item.sales_document_id = sales_document_item_status.sales_document_id
         and sales_document_item.sales_document_item_id = sales_document_item_status.sd_item_id
+        and sales_document_item.client_id = sales_document_item_status.client_id
     {% endif %}
 
     where sales_document_header.sd_document_category in ('c', 'h')

@@ -1,6 +1,7 @@
 {{ config(enabled=var('sap_using_ekbe', True)) }}
 
 select
+    client_id,
     purchasing_document_id,
     purchasing_document_item_id,
     max(delivery_completed) delivery_completed,
@@ -15,4 +16,4 @@ select
     max(hvr_change_time) hvr_change_time,
     max(hvr_is_deleted) hvr_is_deleted 
 from {{ ref('int_sap__purchasing_document_history') }}
-group by 1,2
+group by 1,2,3

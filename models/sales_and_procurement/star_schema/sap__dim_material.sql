@@ -18,6 +18,7 @@ material as (
 {% endif %}
 
 select
+    material.client_id,
     ltrim(material.material_id , '0') as material_number,
     material.material_description,
     material.base_uom_id,
@@ -35,4 +36,6 @@ from material
 {% if using_material_type %}
 left outer join material_type
     on material.material_type_id = material_type.material_type_id
+    and material.client_id = material_type.client_id
 {% endif %}
+

@@ -36,8 +36,10 @@ with purchasing_document_item as (
 
 ), final as (
     select
+        purchasing_document_item.client_id,
         purchasing_document_item.purchasing_document_id,
         purchasing_document_item.purchasing_document_item_id,
+
         purchasing_document_item.material_id,
         purchasing_document_item.plant_id,
         purchasing_document_item.order_uom_id,
@@ -160,23 +162,27 @@ with purchasing_document_item as (
     {% if using_purchasing_document_header %}
     left join purchasing_document_header
         on purchasing_document_header.purchasing_document_id = purchasing_document_item.purchasing_document_id
+        and purchasing_document_header.client_id = purchasing_document_item.client_id
     {% endif %}
 
     {% if using_company %}
     left join company
         on company.company_code_id = purchasing_document_header.company_code_id
+        and company.client_id = purchasing_document_header.client_id
     {% endif %}
 
     {% if using_purchasing_document_overview %}
     left join purchasing_document_overview
         on purchasing_document_overview.purchasing_document_id = purchasing_document_item.purchasing_document_id
         and purchasing_document_overview.purchasing_document_item_id = purchasing_document_item.purchasing_document_item_id
+        and purchasing_document_overview.client_id = purchasing_document_item.client_id
     {% endif %}
 
     {% if using_purchasing_document_schedule_total %}
     left join purchasing_document_schedule_total
         on purchasing_document_schedule_total.purchasing_document_id = purchasing_document_item.purchasing_document_id
         and purchasing_document_schedule_total.purchasing_document_item_id = purchasing_document_item.purchasing_document_item_id
+        and purchasing_document_schedule_total.client_id = purchasing_document_item.client_id
     {% endif %}
 )
 

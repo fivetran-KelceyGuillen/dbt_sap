@@ -1,0 +1,117 @@
+unit_tests:
+
+  - name: test_dim_material_strips_leading_zeros_and_enriches_material_type
+    description: >
+      material_number should be material_id with leading zeros removed, and
+      material_type_description should come from the left-outer-joined
+      material type lookup (matched on client_id + material_type_id), falling
+      back to null when there is no match.
+    model: sap__dim_material
+    given:
+      - input: ref('int_sap__material')
+        rows:
+          - {client_id: '100', material_id: '0000100345', material_description: Widget, base_uom_id: EA, gross_weight: 1.5, weight_uom_id: KG, material_type_id: FERT}
+          - {client_id: '100', material_id: '0000200000', material_description: Gadget, base_uom_id: EA, gross_weight: 0.5, weight_uom_id: KG, material_type_id: ROH}
+      - input: ref('int_sap__material_type')
+        rows:
+          - {client_id: '100', material_type_id: FERT, description_material_type: Finished Product}
+    expect:
+      rows:
+        - {client_id: '100', material_id: '0000100345', material_number: '100345', material_type_id: FERT, material_type_description: Finished Product}
+        - {client_id: '100', material_id: '0000200000', material_number: '200000', material_type_id: null, material_type_description: null}
+
+
+  - name: test_fact_sales_order_sign_flips_by_document_category
+    description: >
+      Order quantity and net value are reported as-is for regular sales
+      orders (sd_document_category = 'c') and are flipped to negative for
+      returns/credit documents (sd_document_category = 'h').
+    model: sap__fact_sales_order
+    given:
+      - input: ref('int_sap__sales_document_header')
+        rows:
+          - {client_id: '100', sales_document_id: '0000000001', sd_document_category: c, sales_organization_id: '1000', distribution_channel_id: '10', division_id: '00', sold_to_party_id: '0000000100', document_date: 2024-01-01, requested_delivery_date: 2024-01-05, created_date: 2024-01-01, created_by: jdoe}
+          - {client_id: '100', sales_document_id: '0000000002', sd_document_category: h, sales_organization_id: '1000', distribution_channel_id: '10', division_id: '00', sold_to_party_id: '0000000100', document_date: 2024-02-01, requested_delivery_date: 2024-02-05, created_date: 2024-02-01, created_by: jdoe}
+      - input: ref('int_sap__sales_document_item')
+        rows:
+          - {client_id: '100', sales_document_id: '0000000001', sales_document_item_id: '000010', material_id: MAT1, base_uom_id: EA, order_quantity: 10, sales_uom_id: EA, net_val: 100, net_price_val: 10, sd_document_currency_id: USD, returns_item: '', _fivetran_deleted: false}
+          - {client_id: '100', sales_document_id: '0000000002', sales_document_item_id: '000010', material_id: MAT1, base_uom_id: EA, order_quantity: 10, sales_uom_id: EA, net_val: 100, net_price_val: 10, sd_document_currency_id: USD, returns_item: '', _fivetran_deleted: false}
+      - input: ref('int_sap__sales_document_header_status')
+        rows:
+          - {client_id: '100', sales_document_id: '0000000001', delivery_status: C, overall_status: C}
+          - {client_id: '100', sales_document_id: '0000000002', delivery_status: C, overall_status: C}
+      - input: ref('int_sap__sales_document_item_status')
+        rows:
+          - {client_id: '100', sales_document_id: '0000000001', sd_item_id: '000010', delivery_status: C}
+          - {client_id: '100', sales_document_id: '0000000002', sd_item_id: '000010', delivery_status: C}
+    expect:
+      rows:
+        - {client_id: '100', sales_document_number: '1', sales_document_item: '10', order_quantity: 10, net_value: 100}
+        - {client_id: '100', sales_document_number: '2', sales_document_item: '10', order_quantity: -10, net_value: -100}
+
+  - name: test_fact_purchasing_order_rejection_and_returns_logic
+    description: >
+      cancel_purchase_quantity should equal the ordered quantity only when
+      rejection_indicator is 'X' (case-insensitive), and purchase_order_quantity
+      should be negated whenever returns_item is populated -- independently of
+      the rejection flag.
+    model: sap__fact_purchasing_order
+    given:
+      - input: ref('int_sap__purchasing_document_item')
+        rows:
+          - {client_id: '100', purchasing_document_id: '4500000001', purchasing_document_item_id: '00010', material_id: MAT1, plant_id: '1000', order_uom_id: EA, returns_item: '', rejection_indicator: '', net_order_po_currency_val: 1000, purchase_order_quantity: 100}
+          - {client_id: '100', purchasing_document_id: '4500000002', purchasing_document_item_id: '00010', material_id: MAT1, plant_id: '1000', order_uom_id: EA, returns_item: '', rejection_indicator: X, net_order_po_currency_val: 1000, purchase_order_quantity: 100}
+          - {client_id: '100', purchasing_document_id: '4500000003', purchasing_document_item_id: '00010', material_id: MAT1, plant_id: '1000', order_uom_id: EA, returns_item: X, rejection_indicator: '', net_order_po_currency_val: 1000, purchase_order_quantity: 100}
+      - input: ref('int_sap__purchasing_document_header')
+        rows:
+          - {client_id: '100', purchasing_document_id: '4500000001', company_code_id: '1000', purchasing_group_id: '001', purchasing_organization_id: PORG, vendor_id: VEND1, purchasing_document_date: 2024-01-01, exchange_rate: 1, currency_id: USD}
+          - {client_id: '100', purchasing_document_id: '4500000002', company_code_id: '1000', purchasing_group_id: '001', purchasing_organization_id: PORG, vendor_id: VEND1, purchasing_document_date: 2024-01-01, exchange_rate: 1, currency_id: USD}
+          - {client_id: '100', purchasing_document_id: '4500000003', company_code_id: '1000', purchasing_group_id: '001', purchasing_organization_id: PORG, vendor_id: VEND1, purchasing_document_date: 2024-01-01, exchange_rate: 1, currency_id: USD}
+      - input: ref('int_sap__company')
+        rows:
+          - {client_id: '100', company_code_id: '1000', currency_id: USD}
+      - input: ref('int_sap__purchasing_document_overview')
+        rows:
+          - {client_id: '999', purchasing_document_id: '9999999999', purchasing_document_item_id: '99999'}
+      - input: ref('int_sap__purchasing_document_schedule_total')
+        rows:
+          - {client_id: '999', purchasing_document_id: '9999999999', purchasing_document_item_id: '99999'}
+
+    expect:
+      rows:
+        - {client_id: '100', purchasing_document_id: '4500000001', purchase_order_quantity: 100, cancel_purchase_quantity: 0}
+        - {client_id: '100', purchasing_document_id: '4500000002', purchase_order_quantity: 100, cancel_purchase_quantity: 100}
+        - {client_id: '100', purchasing_document_id: '4500000003', purchase_order_quantity: -100, cancel_purchase_quantity: 0}
+
+  - name: test_fact_purchasing_order_late_delivery_flags
+    description: >
+      An item received after its latest scheduled delivery date should be
+      flagged as late (purchase_late_quantity/amount and
+      purchase_item_late_count); an item received on or before schedule should
+      not be flagged as late.
+    model: sap__fact_purchasing_order
+    given:
+      - input: ref('int_sap__purchasing_document_item')
+        rows:
+          - {client_id: '100', purchasing_document_id: '4500000010', purchasing_document_item_id: '00010', material_id: MAT1, plant_id: '1000', order_uom_id: EA, returns_item: '', rejection_indicator: '', delivery_completed: '', net_order_po_currency_val: 1000, purchase_order_quantity: 100}
+          - {client_id: '100', purchasing_document_id: '4500000011', purchasing_document_item_id: '00010', material_id: MAT1, plant_id: '1000', order_uom_id: EA, returns_item: '', rejection_indicator: '', delivery_completed: '', net_order_po_currency_val: 1000, purchase_order_quantity: 100}
+      - input: ref('int_sap__purchasing_document_header')
+        rows:
+          - {client_id: '100', purchasing_document_id: '4500000010', company_code_id: '1000', purchasing_group_id: '001', purchasing_organization_id: PORG, vendor_id: VEND1, purchasing_document_date: 2024-01-01, exchange_rate: 1, currency_id: USD}
+          - {client_id: '100', purchasing_document_id: '4500000011', company_code_id: '1000', purchasing_group_id: '001', purchasing_organization_id: PORG, vendor_id: VEND1, purchasing_document_date: 2024-01-01, exchange_rate: 1, currency_id: USD}
+      - input: ref('int_sap__company')
+        rows:
+          - {client_id: '100', company_code_id: '1000', currency_id: USD}
+      - input: ref('int_sap__purchasing_document_overview')
+        rows:
+          - {client_id: '100', purchasing_document_id: '4500000010', purchasing_document_item_id: '00010', delivery_completed: X, latest_goods_receive_date: 2024-01-20, received_quantity: 100, received_value_in_local_curr: 1000, invoice_value_local_curr: 1000}
+          - {client_id: '100', purchasing_document_id: '4500000011', purchasing_document_item_id: '00010', delivery_completed: X, latest_goods_receive_date: 2024-01-10, received_quantity: 100, received_value_in_local_curr: 1000, invoice_value_local_curr: 1000}
+      - input: ref('int_sap__purchasing_document_schedule_total')
+        rows:
+          - {client_id: '100', purchasing_document_id: '4500000010', purchasing_document_item_id: '00010', lastest_scheduled_delivery_date: 2024-01-15}
+          - {client_id: '100', purchasing_document_id: '4500000011', purchasing_document_item_id: '00010', lastest_scheduled_delivery_date: 2024-01-15}
+    expect:
+      rows:
+        - {client_id: '100', purchasing_document_id: '4500000010', purchase_late_quantity: 100, purchase_item_late_count: 1}
+        - {client_id: '100', purchasing_document_id: '4500000011', purchase_late_quantity: 0, purchase_item_late_count: 0}
+

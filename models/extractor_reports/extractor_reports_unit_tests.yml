@@ -1,0 +1,34 @@
+unit_tests:
+
+  - name: test_0employee_attr_date_range_overlap_and_rfpnr_coalesce
+    description: >
+      Employee attributes should be sliced by the date ranges derived from
+      int_sap__0employee_date_changes (not the raw PA table date ranges), and
+      rfpnr should be the first non-null value found across the 20 rfp0x/rfp1x
+      reference-number fields on PA0031.
+    model: sap__0employee_attr
+    given:
+      - input: ref('stg_sap__pa0000')
+        rows:
+          - {pernr: '00000001', begda: 2024-01-01, endda: 2024-12-31, stat2: '3'}
+      - input: ref('stg_sap__pa0001')
+        rows:
+          - {pernr: '00000001', begda: 2024-01-01, endda: 2024-12-31, mandt: '100', bukrs: '1000', werks: '1000', btrtl: '0001', persg: '1', persk: U1, orgeh: ORG1, stell: ST1, plans: PL1, kokrs: KOK1, kostl: CC1, abkrs: AB1, ansvh: A, vdsk1: V1, sname: Org Name}
+      - input: ref('stg_sap__pa0007')
+        rows:
+          - {pernr: '00000001', begda: 2024-01-01, endda: 2024-12-31, empct: 100}
+      - input: ref('stg_sap__pa0008')
+        rows:
+          - {pernr: '00000001', begda: 2024-01-01, endda: 2024-12-31, trfar: TA, trfgb: TG, trfgr: G1, trfst: S1, bsgrd: B1, ancur: USD}
+      - input: ref('stg_sap__pa0031')
+        rows:
+          - {pernr: '00000001', begda: 2024-01-01, endda: 2024-12-31, rfp01: REF123}
+      - input: ref('stg_sap__t503')
+        rows:
+          - {mandt: '100', persg: '1', persk: U1, trfkz: TK1}
+      - input: ref('int_sap__0employee_date_changes')
+        rows:
+          - {pernr: '00000001', begda: 2024-01-01, endda: 2024-06-30}
+    expect:
+      rows:
+        - {pernr: '00000001', begda: 2024-01-01, endda: 2024-06-30, rfpnr: REF123, bukrs: '1000', trfkz: TK1}

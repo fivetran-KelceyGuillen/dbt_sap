@@ -34,9 +34,14 @@ models:
 vars:
   sap_schema: "kel_gcs_sap_hana_db_sapabap1"
   prefix_table_name: ""
+  # t161t (purchasing document type texts) is not synced for this connector;
+  # disabling it lets int_sap__purchasing_document_type / sap__dim_purchasing_order
+  # degrade gracefully (purchasing_document_type_text = null) instead of erroring.
+  #sap_using_t161t: false
   sap:
     acdoca: "{{ source('sap', 'acdoca') }}"
     bkpf: "{{ source('sap', 'bkpf') }}"
+
     bsad_bck: "{{ source('sap', 'bsad_bck') }}"
     bsak_bck: "{{ source('sap', 'bsak_bck') }}"
     bseg: "{{ source('sap', 'bseg') }}"
@@ -93,3 +98,5 @@ vars:
     sapsll_maritc: "{{ source('sap', 'sapsll_maritc') }}"
     sapsll_nosca: "{{ source('sap', 'sapsll_nosca') }}"
     sapsll_tunos: "{{ source('sap', 'sapsll_tunos') }}"
+flags:
+  require_generic_test_arguments_property: true
