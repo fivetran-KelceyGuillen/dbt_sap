@@ -6,7 +6,9 @@
 {% macro default__char_yyyymmdd_to_date(date_string) %}
     to_date(cast({{ date_string }} as {{ dbt.type_string() }}), 'YYYYMMDD')
 {% endmacro %}
-
+{% macro fabric__char_yyyymmdd_to_date(date_string) %}
+    cast(cast({{ date_string }} as {{ dbt.type_string() }}) as date )
+{% endmacro %}
 {% macro bigquery__char_yyyymmdd_to_date(date_string) %}
     safe.parse_date('%Y%m%d', cast({{ date_string }} as string))
 {% endmacro %}
