@@ -1,0 +1,95 @@
+title: "Ventas — sap__fact_sales_order"
+source: analytics
+
+# Reemplazá `internal-sales.dbt_kguillen_kel_dbt` por tu esquema real
+# (ver `dbt list --output json` → campo `relation_name`).
+
+queries:
+  ventas_mensuales:
+    sql: |
+      SELECT
+        date_trunc(document_date, month) AS mes,
+        round(sum(net_value), 2) AS valor_neto,
+        round(sum(order_quantity), 2) AS cantidad_pedida
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_sales_order`
+      WHERE document_date IS NOT NULL
+      GROUP BY 1
+      ORDER BY 1
+
+  top_clientes:
+    sql: |
+      SELECT
+        c.customer_name AS cliente,
+        round(sum(f.net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_sales_order` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_customer` c
+        ON f.client_id = c.client_id AND f.sold_to_customer_id = c.customer_id
+      WHERE c.customer_name IS NOT NULL AND c.customer_name != ''
+      GROUP BY 1
+      ORDER BY valor_neto DESC
+      LIMIT 10
+
+  top_materiales:
+    sql: |
+      SELECT
+        m.material_description AS material,
+        round(sum(f.net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_sales_order` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_material` m
+        ON f.client_id = m.client_id AND f.material_id = m.material_id
+      WHERE m.material_description IS NOT NULL AND m.material_description != ''
+      GROUP BY 1
+      ORDER BY valor_neto DESC
+      LIMIT 10
+
+  kpis_ventas:
+    sql: |
+      SELECT
+        count(*) AS lineas_de_orden,
+        round(sum(net_value), 2) AS valor_neto_total,
+        round(avg(net_price), 2) AS precio_neto_promedio,
+        round(sum(case when returns_item != '' then net_value else 0 end), 2) AS valor_devoluciones,
+        round(
+          sum(case when returns_item != '' then net_value else 0 end)
+          / nullif(sum(net_value), 0) * 100, 2
+        ) AS pct_devolucion
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_sales_order`
+
+charts:
+  ventas_mensuales_chart:
+    type: line
+    query: ventas_mensuales
+    x: mes
+    y: valor_neto
+    title: "Valor neto de ventas por mes"
+
+  top_clientes_chart:
+    type: bar
+    query: top_clientes
+    x: cliente
+    y: valor_neto
+    title: "Top 10 clientes por valor neto de ventas"
+
+  top_materiales_chart:
+    type: bar
+    query: top_materiales
+    x: material
+    y: valor_neto
+    title: "Top 10 materiales por valor neto de ventas"
+
+  kpis_ventas_table:
+    type: table
+    query: kpis_ventas
+    title: "KPIs de ventas"
+
+rows:
+  - title: "Resumen"
+    rows:
+      - kpis_ventas_table
+  - title: "Tendencia"
+    cols:
+      - ventas_mensuales_chart
+  - title: "Detalle"
+    cols:
+      - top_clientes_chart
+      - top_materiales_chart

@@ -1,0 +1,97 @@
+title: "Entregas — sap__fact_delivery"
+source: analytics
+
+# Reemplazá `internal-sales.dbt_kguillen_kel_dbt` por tu esquema real
+# (ver `dbt list --output json` → campo `relation_name`).
+
+queries:
+  entregas_mensuales:
+    sql: |
+      SELECT
+        date_trunc(delivery_date, month) AS mes,
+        round(sum(net_value), 2) AS valor_neto,
+        round(sum(delivery_quantity), 2) AS cantidad_despachada
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_delivery`
+      WHERE delivery_date IS NOT NULL
+      GROUP BY 1
+      ORDER BY 1
+
+  top_materiales_despachados:
+    sql: |
+      SELECT
+        m.material_description AS material,
+        round(sum(f.net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_delivery` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_material` m
+        ON f.client_id = m.client_id AND f.material_id = m.material_id
+      WHERE m.material_description IS NOT NULL AND m.material_description != ''
+      GROUP BY 1
+      ORDER BY valor_neto DESC
+      LIMIT 10
+
+  entregas_por_planta:
+    sql: |
+      SELECT
+        p.plant_name AS planta,
+        round(sum(f.net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_delivery` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_plant` p
+        ON f.client_id = p.client_id AND f.shipping_plant_id = p.plant_id
+      WHERE p.plant_name IS NOT NULL AND p.plant_name != ''
+
+      GROUP BY 1
+      ORDER BY valor_neto DESC
+      LIMIT 10
+
+  kpis_entregas:
+    sql: |
+      SELECT
+        count(*) AS lineas_de_entrega,
+        round(sum(net_value), 2) AS valor_neto_total,
+        round(sum(gross_weight), 2) AS peso_bruto_total,
+        round(
+          avg(date_diff(actual_goods_issue_date, planned_goods_issue_date, day)),
+          2
+        ) AS promedio_dias_atraso_salida
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_delivery`
+      WHERE actual_goods_issue_date IS NOT NULL
+        AND planned_goods_issue_date IS NOT NULL
+
+charts:
+  entregas_mensuales_chart:
+    type: line
+    query: entregas_mensuales
+    x: mes
+    y: valor_neto
+    title: "Valor neto despachado por mes"
+
+  top_materiales_despachados_chart:
+    type: bar
+    query: top_materiales_despachados
+    x: material
+    y: valor_neto
+    title: "Top 10 materiales por valor despachado"
+
+  entregas_por_planta_chart:
+    type: bar
+    query: entregas_por_planta
+    x: planta
+    y: valor_neto
+    title: "Valor despachado por planta"
+
+  kpis_entregas_table:
+    type: table
+    query: kpis_entregas
+    title: "KPIs de entregas"
+
+rows:
+  - title: "Resumen"
+    rows:
+      - kpis_entregas_table
+  - title: "Tendencia"
+    cols:
+      - entregas_mensuales_chart
+  - title: "Detalle"
+    cols:
+      - top_materiales_despachados_chart
+      - entregas_por_planta_chart

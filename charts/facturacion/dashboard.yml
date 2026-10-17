@@ -1,0 +1,96 @@
+title: "Facturación — sap__fact_billing"
+source: analytics
+
+# Reemplazá `internal-sales.dbt_kguillen_kel_dbt` por tu esquema real
+# (ver `dbt list --output json` → campo `relation_name`).
+
+queries:
+  facturacion_mensual:
+    sql: |
+      SELECT
+        date_trunc(billing_date, month) AS mes,
+        round(sum(net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_billing`
+      WHERE billing_date IS NOT NULL
+      GROUP BY 1
+      ORDER BY 1
+
+  top_clientes_facturados:
+    sql: |
+      SELECT
+        c.customer_name AS cliente,
+        round(sum(f.net_value), 2) AS valor_neto
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_billing` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_customer` c
+        ON f.client_id = c.client_id AND f.sold_to_customer_id = c.customer_id
+      WHERE c.customer_name IS NOT NULL AND c.customer_name != ''
+      GROUP BY 1
+      ORDER BY valor_neto DESC
+      LIMIT 10
+
+  distribucion_tipo_documento:
+    sql: |
+      SELECT
+        CASE sd_document_category
+          WHEN 'M' THEN 'Factura'
+          WHEN 'O' THEN 'Nota de crédito'
+          WHEN 'P' THEN 'Anulación de factura'
+          WHEN 'N' THEN 'Anulación de nota de crédito'
+          ELSE sd_document_category
+        END AS tipo_documento,
+        round(sum(net_value), 2) AS valor_neto,
+        count(*) AS lineas
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_billing`
+      GROUP BY 1
+      ORDER BY valor_neto DESC
+
+  kpis_facturacion:
+    sql: |
+      SELECT
+        count(*) AS lineas_facturadas,
+        round(sum(net_value), 2) AS valor_neto_total,
+        round(sum(tax_amount), 2) AS impuestos_total,
+        round(
+          sum(case when cancellation_indicator != '' then 1 else 0 end)
+          / nullif(count(*), 0) * 100, 2
+        ) AS pct_lineas_anuladas
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_billing`
+
+charts:
+  facturacion_mensual_chart:
+    type: line
+    query: facturacion_mensual
+    x: mes
+    y: valor_neto
+    title: "Valor neto facturado por mes"
+
+  top_clientes_facturados_chart:
+    type: bar
+    query: top_clientes_facturados
+    x: cliente
+    y: valor_neto
+    title: "Top 10 clientes por valor facturado"
+
+  distribucion_tipo_documento_chart:
+    type: pie
+    query: distribucion_tipo_documento
+    theta: valor_neto
+    color: tipo_documento
+    title: "Distribución del valor facturado por tipo de documento"
+
+  kpis_facturacion_table:
+    type: table
+    query: kpis_facturacion
+    title: "KPIs de facturación"
+
+rows:
+  - title: "Resumen"
+    rows:
+      - kpis_facturacion_table
+  - title: "Tendencia"
+    cols:
+      - facturacion_mensual_chart
+  - title: "Detalle"
+    cols:
+      - top_clientes_facturados_chart
+      - distribucion_tipo_documento_chart

@@ -1,0 +1,100 @@
+title: "Compras — sap__fact_purchasing_order"
+source: analytics
+
+# Reemplazá `internal-sales.dbt_kguillen_kel_dbt` por tu esquema real
+# (ver `dbt list --output json` → campo `relation_name`).
+#
+# NOTA: estas queries ya corren sobre `sap__fact_purchasing_order` con el
+# filtro aplicado que excluye las 41 líneas identificadas como errores de
+# carga (precio con fecha pegada, cantidades con dígitos de más). Ver
+# SEMANTIC_LAYER.md para el detalle de esa investigación.
+
+queries:
+  compras_mensuales:
+    sql: |
+      SELECT
+        date_trunc(purchasing_document_date, month) AS mes,
+        round(sum(purchase_order_amount), 2) AS monto_comprado
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_purchasing_order`
+      WHERE purchasing_document_date IS NOT NULL
+      GROUP BY 1
+      ORDER BY 1
+
+  top_proveedores:
+    sql: |
+      SELECT
+        v.name AS proveedor,
+        round(sum(f.purchase_order_amount), 2) AS monto_comprado
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_purchasing_order` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_vendor` v
+        ON f.client_id = v.client_id AND f.vendor_id = v.vendor_id
+      WHERE v.name IS NOT NULL AND v.name != ''
+      GROUP BY 1
+      ORDER BY monto_comprado DESC
+      LIMIT 10
+
+  top_materiales_comprados:
+    sql: |
+      SELECT
+        m.material_description AS material,
+        round(sum(f.purchase_order_amount), 2) AS monto_comprado
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_purchasing_order` f
+      JOIN `internal-sales.dbt_kguillen_kel_dbt.sap__dim_material` m
+        ON f.client_id = m.client_id AND f.material_id = m.material_id
+      WHERE m.material_description IS NOT NULL AND m.material_description != ''
+      GROUP BY 1
+      ORDER BY monto_comprado DESC
+      LIMIT 10
+
+  kpis_compras:
+    sql: |
+      SELECT
+        count(*) AS lineas_de_compra,
+        round(sum(purchase_order_amount), 2) AS monto_total,
+        round(sum(cancel_purchase_amount), 2) AS monto_cancelado,
+        round(
+          sum(cancel_purchase_amount) / nullif(sum(purchase_order_amount), 0) * 100, 2
+        ) AS pct_cancelacion,
+        round(
+          sum(purchase_item_late_count) / nullif(count(*), 0) * 100, 2
+        ) AS pct_entrega_tardia
+      FROM `internal-sales.dbt_kguillen_kel_dbt.sap__fact_purchasing_order`
+
+charts:
+  compras_mensuales_chart:
+    type: line
+    query: compras_mensuales
+    x: mes
+    y: monto_comprado
+    title: "Monto comprado por mes"
+
+  top_proveedores_chart:
+    type: bar
+    query: top_proveedores
+    x: proveedor
+    y: monto_comprado
+    title: "Top 10 proveedores por monto comprado"
+
+  top_materiales_comprados_chart:
+    type: bar
+    query: top_materiales_comprados
+    x: material
+    y: monto_comprado
+    title: "Top 10 materiales por monto comprado"
+
+  kpis_compras_table:
+    type: table
+    query: kpis_compras
+    title: "KPIs de compras"
+
+rows:
+  - title: "Resumen"
+    rows:
+      - kpis_compras_table
+  - title: "Tendencia"
+    cols:
+      - compras_mensuales_chart
+  - title: "Detalle"
+    cols:
+      - top_proveedores_chart
+      - top_materiales_comprados_chart
